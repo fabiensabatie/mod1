@@ -55,8 +55,8 @@
 
 typedef enum		e_bool
 {
-	TRUE,
-	FALSE
+	FALSE,
+	TRUE
 }					t_bool;
 
 typedef enum		e_mod

@@ -10,6 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
+# Defining colors
+
+GREEN = \033[0;32m
+RESET = \033[0m
+
 NAME = mod1
 CC = gcc
 
@@ -21,7 +26,7 @@ INC_PATH = ./include/ $(LIB_PATH)libft/includes/ $(LIB_PATH)glfw/include/
 GCC_FLGS = -Werror -Wextra -Wall
 GCC_LIBS = -lglfw3 -framework AppKit -framework OpenGL -framework IOKit -framework CoreVideo
 
-SRC_NAME = mod1.c
+SRC_NAME = mod1.c env.c render.c shaders.c
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 LIB_NAME = libft glfw/src
@@ -34,8 +39,10 @@ LIB = $(addprefix -L$(LIB_PATH),$(LIB_NAME))
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@make -C $(LIB_PATH)libft -j
+	@make -C $(LIB_PATH)libft
+	@echo "$(GREEN)Compiled libft.$(RESET)"
 	@$(CC) $(GCC_FLGS) $(LIB) -lft $(INC) $(OBJ) $(GCC_LIBS) -o $(NAME)
+	@echo "$(GREEN)Compiled the binary.$(RESET)"
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	@mkdir -p $(OBJ_PATH)
