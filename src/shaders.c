@@ -38,7 +38,7 @@ int			errShaderCompilation(t_shader *s, char *filename)
 {
 	if (s->info.success != GL_TRUE)
 	{
-		// Récupération de la taille de l'erreur
+		// Récupération de la taille du message d'erreur
 		glGetShaderiv(s->id, GL_INFO_LOG_LENGTH, &(s->info.msg_len));
 		// Récupération de l'erreur
 		glGetShaderInfoLog(s->id, LOG_BUFFSIZE, &(s->info.msg_len), s->info.log);
