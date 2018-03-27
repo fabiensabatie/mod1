@@ -15,23 +15,19 @@
 GLchar		*getShaderSource(char *filename)
 {
 	char	*line;
-	GLchar	*src;
-	t_vec	*vec;
+	char	*src;
 	int		fd;
 
 	if (!(fd = open(filename, O_RDONLY))
-		|| !(vec = ft_vecnew(1000000, 1)))
+		|| !(src = (char*)malloc(1)))
 		return (NULL);
 	while (get_next_line(fd, &line) > 0)
 	{
 		line = ft_strjoinfree(line, "\n");
-		ft_vecpush(vec, line, ft_strlen(line));
+		src = ft_strjoinfree(src, line);
 		free(line);
 	}
-	src = (GLchar*)ft_strdup(vec->buffer);
-	free(vec->buffer);
-	free(vec);
-	return (src);
+	return ((GLchar*)src);
 }
 
 int			errShaderCompilation(t_shader *s, char *filename)

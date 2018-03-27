@@ -27,22 +27,34 @@ static GLuint createVAO(void)
 static GLuint createBuffer(void)
 {
 	GLuint vao;
-	float vertices[18] = {-0.5f, -0.5f, 0.0, // Coin en bas à gauche
+	float vertices[36] = {-0.5f, -0.5f, 0.0, // Coin en bas à gauche
+						1.0, 0.0, 0.0, // Couleur : R
 		 				-0.5f, 0.5f, 0.0, // Coin en haut a gauche
+						0.0, 1.0, 0.0, // Couleur : G
 						0.5f, -0.5f, 0.0, // Coin en bas à droite
+						0.0, 0.0, 1.0, // Couleur : B
 						/* Deuxieme triangle */
 						-0.5f, 0.5f, 0.0, // Coin en haut a gauche
+						1.0, 0.0, 0.0, // Couleur : R
 						0.5f, -0.5f, 0.0, // Coin en bas à droite
-						0.5f, 0.5f, 0.0}; // Coin en haut à droite
+						0.0, 1.0, 0.0, // Couleur : R
+						0.5f, 0.5f, 0.0, // Coin en haut à droite
+						0.0, 0.0, 1.0}; // Couleur : R
 
 	vao = createVAO();
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 36 * sizeof(float), vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0, NULL);
+	glEnableVertexAttribArray(0);
+	// color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(1);
 	return (vao);
 }
 
@@ -60,12 +72,12 @@ int	render(t_render *r)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(r->win))
 	{
-		// Récupère l'heure
-		float timeValue = glfwGetTime();
-		// Définit la valeur de vert selon l'heure.
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		// Récupère l'id de la variable uniforme "ourColor" (voir shaders/green.frag)
-		int vertexColorLocation = glGetUniformLocation(vertex->prog, "ourColor");
+		// // Récupère l'heure
+		// float timeValue = glfwGetTime();
+		// // Définit la valeur de vert selon l'heure.
+		// float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		// // Récupère l'id de la variable uniforme "ourColor" (voir shaders/green.frag)
+		// int vertexColorLocation = glGetUniformLocation(vertex->prog, "ourColor");
 		// Fond blanc assigné à GL_COLOR_BUFFER_BIT
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 		// Clear la fenêtre
@@ -73,7 +85,7 @@ int	render(t_render *r)
 		// Utilise le programme de shader
 		glUseProgram(vertex->prog);
 		// Assigne la valeur de green value à "ourColor"
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		// glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		// Lie le vao
 		glBindVertexArray(vao);
 		// Dessine les points (6 vertices ici)
