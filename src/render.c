@@ -66,17 +66,22 @@ int	render(t_render *r)
 		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
 		// Récupère l'id de la variable uniforme "ourColor" (voir shaders/green.frag)
 		int vertexColorLocation = glGetUniformLocation(vertex->prog, "ourColor");
+		// Fond blanc assigné à GL_COLOR_BUFFER_BIT
 		glClearColor(1.0, 1.0, 1.0, 1.0);
+		// Clear la fenêtre
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// Utilise le programme de shader
 		glUseProgram(vertex->prog);
 		// Assigne la valeur de green value à "ourColor"
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		// Lie le vao
 		glBindVertexArray(vao);
-		// draw points 0-3 from the currently bound VAO with current in-use shader
+		// Dessine les points (6 vertices ici)
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// update other events like input handling
+		// Récupère les events
 		glfwPollEvents();
-		// put the stuff we've been drawing onto the display
+		/* Swap le buffer (OpenGL utilise un buffer pour dessiner, l'affiche,
+		et commence à dessiner dans celui qui était précedemment affiché */
 		glfwSwapBuffers(r->win);
 	}
 	return (0);

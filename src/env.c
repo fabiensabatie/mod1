@@ -17,8 +17,8 @@ int	init_win(t_render *r)
 	// Initialisation de la librairie et création de la fenêtre.
 	if (!glfwInit())
 		return (0);
-	// Verson à utiliser : 4.1 ceci a besoin d'être effectué entre init et
-	// windowhint, car init reinitialise ces valeurs par defaut. 
+	/* Verson à utiliser : 4.1 ceci a besoin d'être effectué entre glfwInit et
+	gflwCreateWindow, car gflwInit réinitialise ces valeurs par defaut. */
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
