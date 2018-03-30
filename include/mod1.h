@@ -13,6 +13,7 @@
 #ifndef SCOP_H
 # define SCOP_H
 # include "libft.h"
+# include <math.h>
 # include <GLFW/glfw3.h>
 # define LOG_BUFFSIZE 10000000
 
@@ -40,5 +41,5 @@ int				init_win(t_render *r);
 int				render(t_render *r);
 t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
 				t_bool prog);
-
+float 			getZ(float points[5][3], short n, float X, float Y);
 #endif
