@@ -17,7 +17,7 @@
 #include <stdio.h>
 
 
-float getZ(float points[5][3], short n, float X, float Y) {
+float getZ(short n, float points[n][3],  float X, float Y) {
 	float polynomes[n];
 	float res = 0;
 	float z;

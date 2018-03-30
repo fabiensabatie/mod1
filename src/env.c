@@ -23,7 +23,7 @@ int	init_win(t_render *r)
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-	if (!(r->win = glfwCreateWindow(640, 480, "Hello World", NULL, NULL)))
+	if (!(r->win = glfwCreateWindow(800, 800, "Hello World", NULL, NULL)))
 	{
 		glfwTerminate();
 		return (0);

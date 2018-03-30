@@ -16,6 +16,7 @@
 #define FRAG_G "shaders/green.frag"
 #define FRAG_B "shaders/blue.frag"
 
+
 static GLuint createVAO(void)
 {
 	GLuint vao = 0;
@@ -24,12 +25,14 @@ static GLuint createVAO(void)
 	return (vao);
 }
 
+
 static GLuint createBuffer(void)
 {
 	GLuint vao;
-	float points[5][3] ={{0, 0, 0},
+
+	float points[12][3] ={{0, 0, 0},
 						{20000, 20000, 0},
-						{10000, 10000, 10000},
+						{10000, 2000, 10000},
 						{20000, 0, 0},
 						{0, 20000, 0}};
 
@@ -39,9 +42,30 @@ static GLuint createBuffer(void)
 		for (float y = 0; y < 20000; y += 1000) {
 			res[i++] = x / 20000 - 0.5;
 			res[i++] = y / 20000 - 0.5;
-			res[i++] = getZ(points, 5, x, y) / 20000;
+			res[i++] = -getZ(12, points, x, y) / 20000;
 			printf("%f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
 		}
+	}
+
+	float tmp;
+
+	for (size_t i = 1; i < 1200; i += 3) {
+		for (size_t y = 1; y < 1200; y += 3) {
+			if (res[i] < res[y]) {
+				tmp = res[i];
+				res[i] = res[y];
+				res[y] = tmp;
+				tmp = res[i - 1];
+				res[i - 1] = res[y - 1];
+				res[y - 1] = tmp;
+				tmp = res[i + 1];
+				res[i + 1] = res[y + 1];
+				res[y + 1] = tmp;
+			}
+		}
+	}
+	for (int x = 0; x < 1200; x += 3) {
+			printf("%f %f %f\n", res[x], res[x + 1], res[x + 2]);
 	}
 
 	vao = createVAO();
@@ -57,14 +81,6 @@ static GLuint createBuffer(void)
 	return (vao);
 }
 
-void glMatrices(void) {
-	double angleCos = cos(M_PI / 4);
-	double angleSin = cos(M_PI / 4);
-	int cosLoc = glGetUniformLocation(vertex->prog, "aCos");
-	int sinLoc = glGetUniformLocation(vertex->prog, "aSin");
-	glUniform1f(cosLoc, angleCos);
-	glUniform1f(sinLoc, angleSin);
-}
 
 int	render(t_render *r)
 {
@@ -77,14 +93,15 @@ int	render(t_render *r)
 	if (!(frag = build_shader(FRAG_G, GL_FRAGMENT_SHADER, vertex->prog, TRUE)))
 		return (0);
 	vao = createBuffer();
-
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(r->win))
 	{
 		// // Récupère l'id de la variable uniforme "ourColor" (voir shaders/green.frag)
-
+		float rot = M_PI / 4;
+		int rotLoc = glGetUniformLocation(vertex->prog, "theta");
+		glUniform1f(rotLoc, rot);
 		// Fond blanc assigné à GL_COLOR_BUFFER_BIT
-		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClearColor(0.0, 0.0, 0.0, 0.0);
 		// Clear la fenêtre
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Utilise le programme de shader
@@ -93,7 +110,7 @@ int	render(t_render *r)
 		// Lie le vao
 		glBindVertexArray(vao);
 		// Dessine les points (6 vertices ici)
-		glDrawArrays(GL_POINTS, 0, 400);
+		glDrawArrays(GL_LINE_STRIP, 0, 400);
 		// Récupère les events
 		glfwPollEvents();
 		/* Swap le buffer (OpenGL utilise un buffer pour dessiner, l'affiche,

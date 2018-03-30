@@ -41,5 +41,5 @@ int				init_win(t_render *r);
 int				render(t_render *r);
 t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
 				t_bool prog);
-float 			getZ(float points[5][3], short n, float X, float Y);
+float 			getZ(short n, float points[n][3],  float X, float Y);
 #endif
