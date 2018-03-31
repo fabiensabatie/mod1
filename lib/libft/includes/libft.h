@@ -6,7 +6,7 @@
 /*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:49:41 by fsabatie          #+#    #+#             */
-/*   Updated: 2018/03/31 18:51:15 by vlay             ###   ########.fr       */
+/*   Updated: 2018/03/31 19:21:23 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,8 @@ t_list				*ft_lstlink(void *content, size_t content_size);
 char				*ft_strpbrk(const char *s, const char *accept);
 int					get_next_word(int fd, char **word, char *seperator);
 int					ft_strappend(char **s1, char *s2);
+char				*ft_strndup(const char *s, size_t n);
+char				*ft_strdupchr(char *src, char c);
 
 /*
 ** VECTORS

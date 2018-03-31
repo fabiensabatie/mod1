@@ -6,7 +6,7 @@
 /*   By: wwatkins <wwatkins@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 17:23:49 by wwatkins          #+#    #+#             */
-/*   Updated: 2018/03/31 17:48:10 by vlay             ###   ########.fr       */
+/*   Updated: 2018/03/31 19:56:10 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,13 @@ typedef struct	s_lagrange
 	float	*yd;
 	size_t	yd_s;
 }				t_lagrange;
+
+typedef struct	s_parse
+{
+	int		x;
+	int		y
+	int		z;
+}				t_parse;
 
 int				init_win(t_render *r);
 int				render(t_render *r);

@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 17:18:12 by fsabatie          #+#    #+#              #
-#    Updated: 2018/03/31 18:56:31 by vlay             ###   ########.fr        #
+#    Updated: 2018/03/31 19:45:55 by vlay             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ OBJ_PATH = ./build
 IO_SRC =	buffer.c ft_printf.c ft_putendl.c ft_putnbr_fd.c ft_putwchar.c get_next_line.c \
 			spec_handlers.c ft_atoi.c ft_putchar.c ft_putendl_fd.c ft_putstr.c ft_putwstr.c \
 			handlers.c str_printers.c ft_itoa.c ft_putchar_fd.c ft_putnbr.c ft_putstr_fd.c \
-			ft_retsplit.c nb_printers.c ft_pos_atoi.c ft_abs.c
+			ft_retsplit.c nb_printers.c ft_pos_atoi.c ft_abs.c get_next_word.c
 
 LIST_SRC =	ft_lstadd.c ft_lstdel.c ft_lstdelone.c ft_lstiter.c ft_lstmap.c ft_lstnew.c \
 			ft_lstpushback.c ft_lstpop.c ft_lstlink.c
@@ -46,7 +46,7 @@ STR_SRC =	ft_chartostr.c ft_isprint.c ft_strcpy.c ft_strjoin.c ft_strncat.c ft_s
 			ft_strlcat.c ft_strnequ.c ft_strsplit.c ft_wstrnsub.c ft_isalpha.c ft_strcmp.c \
 			ft_strequ.c ft_strlen.c ft_strnew.c ft_strstr.c ft_isascii.c ft_strcount.c ft_striter.c \
 			ft_strmap.c ft_strnstr.c ft_strsub.c ft_isdigit.c ft_strcpos.c ft_striteri.c \
-			ft_strmapi.c ft_strnsub.c ft_strtrim.c ft_strpbrk.c ft_strappend.c
+			ft_strmapi.c ft_strnsub.c ft_strtrim.c ft_strpbrk.c ft_strappend.c ft_strndup.c ft_strdupchr.c
 
 VEC_SRC =	ft_vecnew.c ft_vecpush.c
 
