@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsabatie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/26 14:39:41 by fsabatie          #+#    #+#             */
-/*   Updated: 2018/03/26 14:39:43 by fsabatie         ###   ########.fr       */
+/*   Updated: 2018/03/31 18:05:00 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,43 +29,24 @@ static GLuint createVAO(void)
 static GLuint createBuffer(void)
 {
 	GLuint vao;
-
-	float points[12][3] ={{0, 0, 0},
+	t_lagrange lag;
+	float points[5][3] ={{0, 0, 0},
 						{20000, 20000, 0},
-						{10000, 2000, 10000},
+						{1000, 1000, 1000},
 						{20000, 0, 0},
 						{0, 20000, 0}};
 
+	diffx(5, points, &lag);
+	diffy(5, points, &lag);
 	float res[1200];
 	int i = 0;
 	for (float x = 0; x < 20000; x += 1000) {
 		for (float y = 0; y < 20000; y += 1000) {
 			res[i++] = x / 20000 - 0.5;
 			res[i++] = y / 20000 - 0.5;
-			res[i++] = -getZ(12, points, x, y) / 20000;
-			printf("%f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
+			res[i++] = -interpolation(&lag, 5, points, x, y) / 20000;
+			// printf("%f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
 		}
-	}
-
-	float tmp;
-
-	for (size_t i = 1; i < 1200; i += 3) {
-		for (size_t y = 1; y < 1200; y += 3) {
-			if (res[i] < res[y]) {
-				tmp = res[i];
-				res[i] = res[y];
-				res[y] = tmp;
-				tmp = res[i - 1];
-				res[i - 1] = res[y - 1];
-				res[y - 1] = tmp;
-				tmp = res[i + 1];
-				res[i + 1] = res[y + 1];
-				res[y + 1] = tmp;
-			}
-		}
-	}
-	for (int x = 0; x < 1200; x += 3) {
-			printf("%f %f %f\n", res[x], res[x + 1], res[x + 2]);
 	}
 
 	vao = createVAO();
@@ -110,7 +91,7 @@ int	render(t_render *r)
 		// Lie le vao
 		glBindVertexArray(vao);
 		// Dessine les points (6 vertices ici)
-		glDrawArrays(GL_LINE_STRIP, 0, 400);
+		glDrawArrays(GL_LINES, 0, 400);
 		// Récupère les events
 		glfwPollEvents();
 		/* Swap le buffer (OpenGL utilise un buffer pour dessiner, l'affiche,

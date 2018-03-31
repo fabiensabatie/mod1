@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   scop.h                                             :+:      :+:    :+:   */
+/*   mod1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wwatkins <wwatkins@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 17:23:49 by wwatkins          #+#    #+#             */
-/*   Updated: 2016/12/12 11:34:21 by wwatkins         ###   ########.fr       */
+/*   Updated: 2018/03/31 17:48:10 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,23 @@ typedef struct	s_render
 	GLFWwindow*	win;
 }				t_render;
 
+typedef struct	s_lagrange
+{
+	float	*xd;
+	size_t	xd_s;
+	float	*yd;
+	size_t	yd_s;
+}				t_lagrange;
+
 int				init_win(t_render *r);
 int				render(t_render *r);
 t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
 				t_bool prog);
 float 			getZ(short n, float points[n][3],  float X, float Y);
+void			diffx(short n, float points[n][3], t_lagrange *lag);
+void			diffy(short n, float points[n][3], t_lagrange *lag);
+float			Lx(t_lagrange *lag, float xi, float X);
+float			Ly(t_lagrange *lag, float yi, float Y);
+float			interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
+
 #endif
