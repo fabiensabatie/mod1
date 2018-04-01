@@ -18,11 +18,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float	interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y)
+float	interpolation(short n, float points[n][3], float X, float Y)
 {
 	short	i = 0;
 	float	polynome = 0;
-	(void)lag;
 	while (i < n)
 	{
 		float f = (float)(X-points[i][0]) * (float)(X-points[i][0]);

@@ -26,7 +26,7 @@ INC_PATH = ./include/ $(LIB_PATH)libft/includes/ $(LIB_PATH)glfw/include/
 GCC_FLGS = -Werror -Wextra -Wall
 GCC_LIBS = -lglfw3 -framework AppKit -framework OpenGL -framework IOKit -framework CoreVideo
 
-SRC_NAME = mod1.c env.c render.c shaders.c surface.c Lx.c Ly.c parser.c
+SRC_NAME = mod1.c env.c render.c shaders.c surface.c parser.c
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 LIB_NAME = libft glfw/src

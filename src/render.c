@@ -28,8 +28,7 @@ static GLuint createVAO(void)
 static GLuint createBuffer(void)
 {
 	GLuint vao;
-	t_lagrange lag;
-<<<<<<< HEAD
+
 	int pt = 9;
 	float points[9][3] = {{5, 5, 5},
 						{2, 3, 3},
@@ -47,27 +46,8 @@ static GLuint createBuffer(void)
 		for (float y = 0; y < 10; y += 0.1) {
 			res[i++] = x / 10 - 0.5;
 			res[i++] = y / 10 - 0.5;
-			res[i++] = -interpolation(&lag, pt, points, x, y) / 10;
+			res[i++] = -interpolation(pt, points, x, y) / 10;
 			printf("interpol: %f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
-=======
-	float	points[6][3] ={{0, 0, 0},
-						{20000, 20000, 0},
-						{10000, 10000, 5000},
-						{5000, 5000, 5000},
-						{20000, 0, 0},
-						{0, 20000, 0}};
-
-	diffx(6, points, &lag);
-	diffy(6, points, &lag);
-	float res[1200000];
-	int i = 0;
-	for (float x = 0; x < 20000; x += 100) {
-		for (float y = 0; y < 20000; y += 100) {
-			res[i++] = x / 20000 - 0.5;
-			res[i++] = y / 20000 - 0.5;
-			res[i++] = -interpolation(&lag, 6, points, x, y) / 20000;
-			// printf("%f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
->>>>>>> 7ab33adfb3595d231282e888e353a2af7af06728
 		}
 	}
 

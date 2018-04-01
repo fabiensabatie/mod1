@@ -38,14 +38,6 @@ typedef struct	s_render
 	GLFWwindow*	win;
 }				t_render;
 
-typedef struct	s_lagrange
-{
-	float	*xd;
-	size_t	xd_s;
-	float	*yd;
-	size_t	yd_s;
-}				t_lagrange;
-
 typedef struct	s_parse
 {
 	int		x;
@@ -58,15 +50,8 @@ int				render(t_render *r);
 t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
 				t_bool prog);
 float 			getZ(short n, float points[n][3],  float X, float Y);
-void			diffx(short n, float points[n][3], t_lagrange *lag);
-void			diffy(short n, float points[n][3], t_lagrange *lag);
-float			Lx(t_lagrange *lag, float xi, float X);
-float			Ly(t_lagrange *lag, float yi, float Y);
-<<<<<<< HEAD
-float interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
-=======
-float			interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
+float			interpolation(short n, float points[n][3], float X, float Y);
 t_list			*parser(char *path);
->>>>>>> 7ab33adfb3595d231282e888e353a2af7af06728
+
 
 #endif
