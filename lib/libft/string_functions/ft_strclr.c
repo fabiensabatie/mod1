@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strclr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsabatie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 22:31:15 by fsabatie          #+#    #+#             */
-/*   Updated: 2017/11/08 22:31:16 by fsabatie         ###   ########.fr       */
+/*   Updated: 2018/04/01 15:26:44 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "libft.h"
 
 /*
 ** Assigne la valeur ’\0’ à tous les caractères de la chaine passée
@@ -18,6 +20,5 @@
 void	ft_strclr(char *s)
 {
 	if (s)
-		while (*s)
-			*s++ = 0;
+		ft_bzero(s, ft_strlen(s));
 }

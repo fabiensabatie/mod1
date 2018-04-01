@@ -6,7 +6,7 @@
 /*   By: wwatkins <wwatkins@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 17:23:49 by wwatkins          #+#    #+#             */
-/*   Updated: 2018/03/31 19:56:10 by vlay             ###   ########.fr       */
+/*   Updated: 2018/04/01 18:37:07 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ void			diffx(short n, float points[n][3], t_lagrange *lag);
 void			diffy(short n, float points[n][3], t_lagrange *lag);
 float			Lx(t_lagrange *lag, float xi, float X);
 float			Ly(t_lagrange *lag, float yi, float Y);
+<<<<<<< HEAD
 float interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
+=======
+float			interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
+t_list			*parser(char *path);
+>>>>>>> 7ab33adfb3595d231282e888e353a2af7af06728
 
 #endif
