@@ -6,12 +6,11 @@
 /*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/26 14:39:41 by fsabatie          #+#    #+#             */
-/*   Updated: 2018/03/31 18:05:00 by vlay             ###   ########.fr       */
+/*   Updated: 2018/04/01 20:24:50 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mod1.h"
-#include <math.h>
 #define VERTEX "shaders/test.vert"
 #define FRAG_G "shaders/green.frag"
 #define FRAG_B "shaders/blue.frag"
@@ -30,32 +29,22 @@ static GLuint createBuffer(void)
 {
 	GLuint vao;
 	t_lagrange lag;
-	float points[16][3] ={{0, 0, 0},
+	float	points[6][3] ={{0, 0, 0},
 						{20000, 20000, 0},
-						{4000,4000,2000},
-						{8000,4000,0},
-						{12000,4000,2000},
-						{16000,4000,200},
-						{4000,8000,500},
-						{8000,8000,2000},
-						{12000,8000,200},
-						{16000,8000,2000},
-						{4000,12000,2000},
-						{8000,12000,0},
-						{12000,12000,2000},
-						{16000,12000,200},
+						{10000, 10000, 5000},
+						{5000, 5000, 5000},
 						{20000, 0, 0},
 						{0, 20000, 0}};
 
-	diffx(5, points, &lag);
-	diffy(5, points, &lag);
+	diffx(6, points, &lag);
+	diffy(6, points, &lag);
 	float res[1200000];
 	int i = 0;
 	for (float x = 0; x < 20000; x += 100) {
 		for (float y = 0; y < 20000; y += 100) {
 			res[i++] = x / 20000 - 0.5;
 			res[i++] = y / 20000 - 0.5;
-			res[i++] = -interpolation(&lag, 16, points, x, y) / 20000;
+			res[i++] = -interpolation(&lag, 6, points, x, y) / 20000;
 			// printf("%f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: wwatkins <wwatkins@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 17:23:49 by wwatkins          #+#    #+#             */
-/*   Updated: 2018/03/31 19:56:10 by vlay             ###   ########.fr       */
+/*   Updated: 2018/04/01 18:37:07 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct	s_lagrange
 typedef struct	s_parse
 {
 	int		x;
-	int		y
+	int		y;
 	int		z;
 }				t_parse;
 
@@ -62,5 +62,6 @@ void			diffy(short n, float points[n][3], t_lagrange *lag);
 float			Lx(t_lagrange *lag, float xi, float X);
 float			Ly(t_lagrange *lag, float yi, float Y);
 float			interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
+t_list			*parser(char *path);
 
 #endif
