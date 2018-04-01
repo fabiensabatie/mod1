@@ -15,6 +15,7 @@
 # include "libft.h"
 # include <math.h>
 # include <GLFW/glfw3.h>
+
 # define LOG_BUFFSIZE 10000000
 
 typedef struct		s_shader
@@ -48,7 +49,7 @@ typedef struct	s_lagrange
 typedef struct	s_parse
 {
 	int		x;
-	int		y
+	int		y;
 	int		z;
 }				t_parse;
 
@@ -61,6 +62,6 @@ void			diffx(short n, float points[n][3], t_lagrange *lag);
 void			diffy(short n, float points[n][3], t_lagrange *lag);
 float			Lx(t_lagrange *lag, float xi, float X);
 float			Ly(t_lagrange *lag, float yi, float Y);
-float			interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
+float interpolation(t_lagrange *lag, short n, float points[n][3], float X, float Y);
 
 #endif

@@ -40,13 +40,6 @@ void	diffy(short n, float points[n][3], t_lagrange *lag)
 		i++;
 	}
 	fduplagy(lag, ptmp);
-	printf("p = %zu\n", lag->yd_s);
-	i = 0;
-	while ((size_t)i < lag->yd_s)
-	{
-		printf("%i : %f\n", i, lag->yd[i]);
-		i++;
-	}
 }
 
 float	Ly(t_lagrange *lag, float yi, float Y)

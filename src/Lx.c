@@ -40,13 +40,6 @@ void	diffx(short n, float points[n][3], t_lagrange *lag)
 		i++;
 	}
 	fduplagx(lag, ptmp);
-	printf("p = %zu\n", lag->xd_s);
-	i = 0;
-	while ((size_t)i < lag->xd_s)
-	{
-		printf("%i : %f\n", i, lag->xd[i]);
-		i++;
-	}
 }
 
 float	Lx(t_lagrange *lag, float xi, float X)

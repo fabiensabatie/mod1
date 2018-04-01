@@ -22,11 +22,13 @@ float interpolation(t_lagrange *lag, short n, float points[n][3], float X, float
 {
 	short	i = 0;
 	float	polynome = 0;
-
+	(void)lag;
 	while (i < n)
 	{
-		polynome += points[i][2] * (Lx(lag, points[i][0], X) * Ly(lag, points[i][1], Y));
+		float f = (float)(X-points[i][0]) * (float)(X-points[i][0]);
+		float s = (float)(Y-points[i][1]) * (float)(Y-points[i][1]);
+		polynome += (float)points[i][2] * pow(1.5,-(f + s));//(float)expf(-(f + s));
 		i++;
 	}
-	return (polynome);
+	return (polynome / 3);
 }

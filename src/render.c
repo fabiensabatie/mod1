@@ -30,33 +30,25 @@ static GLuint createBuffer(void)
 {
 	GLuint vao;
 	t_lagrange lag;
-	float points[16][3] ={{0, 0, 0},
-						{20000, 20000, 0},
-						{4000,4000,2000},
-						{8000,4000,0},
-						{12000,4000,2000},
-						{16000,4000,200},
-						{4000,8000,500},
-						{8000,8000,2000},
-						{12000,8000,200},
-						{16000,8000,2000},
-						{4000,12000,2000},
-						{8000,12000,0},
-						{12000,12000,2000},
-						{16000,12000,200},
-						{20000, 0, 0},
-						{0, 20000, 0}};
-
-	diffx(5, points, &lag);
-	diffy(5, points, &lag);
-	float res[1200000];
+	int pt = 9;
+	float points[9][3] = {{5, 5, 5},
+						{2, 3, 3},
+						{4, 1, 2},
+						{3, 5, 1},
+						{1, 1, 5},
+						{7, 8, 10},
+						{0, 8, 3},
+						{7, 2, 6},
+						{6, 9, 5}
+						};
+	float res[30000];
 	int i = 0;
-	for (float x = 0; x < 20000; x += 100) {
-		for (float y = 0; y < 20000; y += 100) {
-			res[i++] = x / 20000 - 0.5;
-			res[i++] = y / 20000 - 0.5;
-			res[i++] = -interpolation(&lag, 16, points, x, y) / 20000;
-			// printf("%f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
+	for (float x = 0; x < 10; x += 0.1) {
+		for (float y = 0; y < 10; y += 0.1) {
+			res[i++] = x / 10 - 0.5;
+			res[i++] = y / 10 - 0.5;
+			res[i++] = -interpolation(&lag, pt, points, x, y) / 10;
+			printf("interpol: %f %f %f\n", res[i - 3], res[i - 2], res[i - 1]);
 		}
 	}
 
@@ -64,7 +56,7 @@ static GLuint createBuffer(void)
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 120000 * sizeof(float), res, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 30000 * sizeof(float), res, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// position attribute
@@ -109,7 +101,7 @@ int	render(t_render *r)
 		// Lie le vao
 		glBindVertexArray(vao);
 		// Dessine les points (6 vertices ici)
-		glDrawArrays(GL_POINTS, 0, 40000);
+		glDrawArrays(GL_POINTS, 0, 10000);
 		// Récupère les events
 		glfwPollEvents();
 		/* Swap le buffer (OpenGL utilise un buffer pour dessiner, l'affiche,

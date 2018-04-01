@@ -26,6 +26,7 @@ void main()
 						0, 1, 0, 0,
 						ySin, 0, yCos, 0,
 						0, 0, 0, 1);
+
 	gl_Position = vec4(aPos, 1.0);
 	ourColor = vec3(1.0 - gl_Position.x * 2, 1.0 - gl_Position.y *2, 1.0 - gl_Position.z * 2);
 	gl_Position = rotZ * vec4(aPos, 1.0);
