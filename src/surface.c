@@ -26,8 +26,8 @@ float	interpolation(short n, float points[n][3], float X, float Y)
 	{
 		float f = (float)(X-points[i][0]) * (float)(X-points[i][0]);
 		float s = (float)(Y-points[i][1]) * (float)(Y-points[i][1]);
-		polynome += (float)points[i][2] * pow(1.5,-(f + s));//(float)expf(-(f + s));
+		polynome += (float)points[i][2] * pow(1.5,-(f + s) * 4);//(float)expf(-(f + s));
 		i++;
 	}
-	return (polynome / 3);
+	return (polynome);
 }
