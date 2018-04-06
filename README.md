@@ -2,10 +2,10 @@
 
 ## Controls:
 
-UP, DOWN arrows for X rotation.
-LEFT, RIGHT arrows for Y rotation.
-P : Psychedelic mode.
-M : Switches between points, lines, and triangles.
+- UP, DOWN arrows for X rotation.
+- LEFT, RIGHT arrows for Y rotation.
+- P : Psychedelic mode.
+- M : Switches between points, lines, and triangles.
 
 ## About the project
 
