@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/25 07:14:43 by fsabatie          #+#    #+#              #
-#    Updated: 2018/03/31 19:50:30 by vlay             ###   ########.fr        #
+#    Updated: 2018/04/06 21:08:36 by vlay             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ INC_PATH = ./include/ $(LIB_PATH)libft/includes/ $(LIB_PATH)glfw/include/
 GCC_FLGS = -Werror -Wextra -Wall
 GCC_LIBS = -lglfw3 -framework AppKit -framework OpenGL -framework IOKit -framework CoreVideo
 
-SRC_NAME = mod1.c env.c render.c shaders.c surface.c parser.c events.c particles.c
+SRC_NAME = mod1.c env.c render.c shaders.c surface.c parser.c events.c particles.c cube.c
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 LIB_NAME = libft glfw/src

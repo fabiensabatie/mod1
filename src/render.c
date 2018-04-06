@@ -6,7 +6,7 @@
 /*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/26 14:39:41 by fsabatie          #+#    #+#             */
-/*   Updated: 2018/04/01 20:24:50 by vlay             ###   ########.fr       */
+/*   Updated: 2018/04/06 22:40:33 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ int	render(t_render *r)
 	t_shader	*vertex;
 	t_shader	*frag;
 	GLuint		vao;
+	t_cube		*cube;
 
 	r->draw_mod = GL_TRIANGLES;
 	r->rotY = 0;
@@ -139,26 +140,28 @@ int	render(t_render *r)
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glfwSetWindowUserPointer(r->win, r);
 	vao = createBuffer(r);
+	cube = t_cubeCreate(10, 2, 2, 1.0);
 	while (!glfwWindowShouldClose(r->win))
 	{
-
-		// for (size_t i = 0; i < r->part_number; i++) {
-		// 	if (i < 20) {
-		// 		printf("i = %li : ", i);
-		// 		printf("%f ", r->particles[i]->pos.x);
-		// 		printf("%f\n", r->particles[i]->pos.y);
-		// 	}
-		// }
-		// updateParticlesState(r);
+		for (size_t i = 0; i < 10; i++) {
+			t_cubeAddDensity(cube, i, 1, 1, 5.0);
+		}
+		for (size_t i = 0; i < 10; i++) {
+			t_cubeAddVelocity(cube, i, 1, 1, 1.0, 1.0, 1.0);
+		}
+		t_cubeStep(cube);
+		for (size_t i = 0; i < cube->size * cube->size * cube->size * sizeof(float); i++) {
+	 		printf("%zu: Vx:%f Vy:%f Vz:%f | Vx0:%f Vy0:%f Vz0:%f\n", i, cube->Vx[i], cube->Vy[i], cube->Vz[i], cube->Vx0[i], cube->Vy0[i], cube->Vz0[i]);
+		}
 		glfwSetKeyCallback(r->win, event);
 		set_Uniforms(r, vertex);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(vertex->prog);
 		glBindVertexArray(vao);
 		glDrawArrays(r->draw_mod, 0, 58806);
-		// glDrawArrays(GL_POINTS, 0, r->part_number);
 		glfwPollEvents();
 		glfwSwapBuffers(r->win);
 	}
+	t_cubeFree(cube);
 	return (0);
 }
