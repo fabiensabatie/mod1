@@ -1,5 +1,14 @@
 # mod1
 
+## Controls:
+
+UP, DOWN arrows for X rotation.
+LEFT, RIGHT arrows for Y rotation.
+P : Psychedelic mode.
+M : Switches between points, lines, and triangles.
+
+## About the project
+
 This project is about creating a terrestrial simulation followed by a hydrodynamic one.
 At first, you will extrapolate a surface from the very restricted provided data
 to represent a scene. Once that scene is defined, it will be covered with

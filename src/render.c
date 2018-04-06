@@ -15,7 +15,6 @@
 #define FRAG_G "shaders/green.frag"
 #define FRAG_B "shaders/blue.frag"
 
-
 static GLuint createVAO(void)
 {
 	GLuint vao = 0;
@@ -24,71 +23,41 @@ static GLuint createVAO(void)
 	return (vao);
 }
 
-
-static GLuint createBuffer(void)
+GLuint createBuffer(t_render *r)
 {
 	GLuint vao;
-
-	int pt = 21;
-	float points[21][3] = {{5000,5000,5000},
-	{5000,15000,5000},
-	{15000,15000,4000},
-	{15000,5000,5000},
-	{7400,10000,3000},
-	{7400,15000,3000},
-	{12600,15000,3000},
-	{12600,10000,3000},
-	{5000,10000,5000},
-	{15000,10000,5000},
-	{10000,15000,2000},
-	{10000,12600,1000},
-	{10000,10000,0},
-	{10000,7400,0},
-	{6200,10000,0},
-	{13800,10000,0},
-	{5000,7400,5000},
-	{15000,7400,5000},
-	{5000,12600,5000},
-	{15000,12600,4500},
-	{10000,5000,5000}};
-
-	for	(int i = 0; i < 21 ; i++){
-		for	(int y = 0; y < 3 ; y++){
-			points[i][y] /= (float)2000;
-		}
-	}
-
-
 	float res[176418];
+
+	r->zmax = 0;
 	int i = 0;
-	int t = 0;
 	for (float x = 0.1; x < 10; x += 0.1) {
 		for (float y = 0; y < 9.9; y += 0.1) {
 			res[i++] = x / 10 - 0.5;
 			res[i++] = y / 10 - 0.5;
-			res[i++] = -interpolation(pt, points, x, y) / 10;
+			res[i++] = -interpolation(r->size, r->points, x, y) / 10;
+			r->zmax = (r->zmax > res[i - 1]) ? res[i - 1] : r->zmax;
 			res[i++] = (x - 0.1) / 10 - 0.5;
 			res[i++] = y / 10 - 0.5;
-			res[i++] = -interpolation(pt, points, x - 0.1, y) / 10;
+			res[i++] = -interpolation(r->size, r->points, x - 0.1, y) / 10;
+			r->zmax = (r->zmax > res[i - 1]) ? res[i - 1] : r->zmax;
 			res[i++] = (x - 0.1) / 10 - 0.5;
 			res[i++] = (y + 0.1) / 10 - 0.5;
-			res[i++] = -interpolation(pt, points, x - 0.1, y + 0.1) / 10;
-			t++;
-			
+			res[i++] = -interpolation(r->size, r->points, x - 0.1, y + 0.1) / 10;
+			r->zmax = (r->zmax > res[i - 1]) ? res[i - 1] : r->zmax;
 			res[i++] = x / 10 - 0.5;
 			res[i++] = y / 10 - 0.5;
-			res[i++] = -interpolation(pt, points, x, y) / 10;
+			res[i++] = -interpolation(r->size, r->points, x, y) / 10;
+			r->zmax = (r->zmax > res[i - 1]) ? res[i - 1] : r->zmax;
 			res[i++] = x / 10 - 0.5;
 			res[i++] = (y + 0.1) / 10 - 0.5;
-			res[i++] = -interpolation(pt, points, x, y + 0.1) / 10;
+			res[i++] = -interpolation(r->size, r->points, x, y + 0.1) / 10;
+			r->zmax = (r->zmax > res[i - 1]) ? res[i - 1] : r->zmax;
 			res[i++] = (x - 0.1) / 10 - 0.5;
 			res[i++] = (y + 0.1) / 10 - 0.5;
-			res[i++] = -interpolation(pt, points, x - 0.1, y + 0.1) / 10;
-			t++;
-			
+			res[i++] = -interpolation(r->size, r->points, x - 0.1, y + 0.1) / 10;
+			r->zmax = (r->zmax > res[i - 1]) ? res[i - 1] : r->zmax;
 		}
 	}
-	ft_printf("Got %d triangles\n", t);
 	vao = createVAO();
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
@@ -96,7 +65,6 @@ static GLuint createBuffer(void)
 	glBufferData(GL_ARRAY_BUFFER, 99 * 99 * 2 * 3 * 3 * sizeof(float), res, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -104,46 +72,92 @@ static GLuint createBuffer(void)
 	return (vao);
 }
 
+//
+// GLuint createBuffer(t_render *r)
+// {
+// 	GLuint vao;
+// 	float res[r->part_number * 3];
+// 	size_t i = 0;
+// 	size_t y = 0;
+// 	while (i < r->part_number * 3) {
+// 		res[i++] = r->particles[y]->pos.x / 200 - 0.5;
+// 		res[i++] = r->particles[y]->pos.y / 200 - 0.5;
+// 		res[i++] = r->particles[y]->pos.z / 200 - 0.5;
+// 		y++;
+// 	}
+//
+// 	vao = createVAO();
+// 	GLuint vbo = 0;
+// 	glGenBuffers(1, &vbo);
+// 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+// 	glBufferData(GL_ARRAY_BUFFER, r->part_number * 3 * sizeof(float), res, GL_DYNAMIC_DRAW);
+// 	glEnableVertexAttribArray(0);
+// 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
+// 	glEnableVertexAttribArray(0);
+// 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+// 	glEnable(GL_DEPTH_TEST);
+// 	return (vao);
+// }
+
+void set_Uniforms(t_render *r, t_shader *vertex)
+{
+	float thetaz = 0;
+	int rotYLoc = glGetUniformLocation(vertex->prog, "rot_Y");
+	int txLoc = glGetUniformLocation(vertex->prog, "thetax");
+	int tzLoc = glGetUniformLocation(vertex->prog, "thetaz");
+	int zLoc = glGetUniformLocation(vertex->prog, "zmax");
+	int psyLoc = glGetUniformLocation(vertex->prog, "psy");
+	int tiLoc = glGetUniformLocation(vertex->prog, "t");
+	float thetax = (M_PI / 4) * r->rotX / 20;
+	float timeValue = glfwGetTime();
+	float t = sin(timeValue) / 2.0f + 0.5f;
+	t = (t < 0) ? -t : t;
+	glUniform1f(txLoc, thetax);
+	glUniform1f(tzLoc, thetaz);
+	glUniform1f(zLoc, -0.05);
+	glUniform1f(rotYLoc, r->rotY / 20);
+	glUniform1i(psyLoc, r->psy);
+	glUniform1f(tiLoc, t);
+}
 
 int	render(t_render *r)
 {
 	t_shader	*vertex;
 	t_shader	*frag;
 	GLuint		vao;
-	float		rot = 0;
+
+	r->draw_mod = GL_TRIANGLES;
+	r->rotY = 0;
+	r->rotX = 20;
+	r->psy = 0;
 
 	if (!(vertex = build_shader(VERTEX, GL_VERTEX_SHADER, 0, FALSE)))
 		return (0);
 	if (!(frag = build_shader(FRAG_G, GL_FRAGMENT_SHADER, vertex->prog, TRUE)))
 		return (0);
-	vao = createBuffer();
-
-	int rLoc = glGetUniformLocation(vertex->prog, "rot");
-	int tLoc = glGetUniformLocation(vertex->prog, "theta");
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	
-	/* Loop until the user closes the window */
+	glfwSetWindowUserPointer(r->win, r);
+	vao = createBuffer(r);
 	while (!glfwWindowShouldClose(r->win))
 	{
-		// // Récupère l'id de la variable uniforme "ourColor" (voir shaders/green.frag)
-		float theta = M_PI / 4;
-		rot++;
-		glUniform1f(tLoc, theta);
-		glUniform1f(rLoc, rot / 20);
-		// Fond blanc assigné à GL_COLOR_BUFFER_BIT
-		// Clear la fenêtre
+
+		// for (size_t i = 0; i < r->part_number; i++) {
+		// 	if (i < 20) {
+		// 		printf("i = %li : ", i);
+		// 		printf("%f ", r->particles[i]->pos.x);
+		// 		printf("%f\n", r->particles[i]->pos.y);
+		// 	}
+		// }
+		// updateParticlesState(r);
+		glfwSetKeyCallback(r->win, event);
+		set_Uniforms(r, vertex);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// Utilise le programme de shader
 		glUseProgram(vertex->prog);
-		// Assigne la valeur de green value à "ourColor"
-		// Lie le vao
 		glBindVertexArray(vao);
-		// Dessine les points (6 vertices ici)
-		glDrawArrays(GL_LINES, 0, 58806);
-		// Récupère les events
+		glDrawArrays(r->draw_mod, 0, 58806);
+		// glDrawArrays(GL_POINTS, 0, r->part_number);
 		glfwPollEvents();
-		/* Swap le buffer (OpenGL utilise un buffer pour dessiner, l'affiche,
-		et commence à dessiner dans celui qui était précedemment affiché */
 		glfwSwapBuffers(r->win);
 	}
 	return (0);

@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float	interpolation(short n, float points[n][3], float X, float Y)
+float	interpolation(short n, float **points, float X, float Y)
 {
 	short	i = 0;
 	float	polynome = 0;

@@ -33,25 +33,46 @@ typedef struct		s_shader
 	}				info;
 }					t_shader;
 
+typedef struct	s_vec3D {
+
+	float		x;
+	float		y;
+	float		z;
+}				vec3D;
+
+typedef struct	s_pcl {
+
+	vec3D		pos; // Position
+	vec3D		v; // Velocity
+	vec3D		f; // Forces (gravity)
+	float		rho; // Density
+	float		p; // Pressure
+}				t_pcl;
+
 typedef struct	s_render
 {
-	GLFWwindow*	win;
+	GLFWwindow	*win;
+	float		**points;
+	t_pcl		**particles;
+	size_t		part_number;
+	int			size;
+	float		zmax;
+	GLuint		draw_mod;
+	float		rotY;
+	float 		rotX;
+	int 		psy;
+	int			m_height;
 }				t_render;
-
-typedef struct	s_parse
-{
-	int		x;
-	int		y;
-	int		z;
-}				t_parse;
 
 int				init_win(t_render *r);
 int				render(t_render *r);
 t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
 				t_bool prog);
-float 			getZ(short n, float points[n][3],  float X, float Y);
-float			interpolation(short n, float points[n][3], float X, float Y);
-t_list			*parser(char *path);
-
+float			interpolation(short n, float **points, float X, float Y);
+float			**parser(t_render *r, char *path);
+void			event(GLFWwindow* window, int key, int scancode, int action, \
+				int mods);
+t_pcl			**initParticles(t_render *r);
+void 			updateParticlesState(t_render *r);
 
 #endif

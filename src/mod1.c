@@ -15,25 +15,22 @@
 int main(int ac, char **av)
 {
 	t_render *r;
-	(void)ac;
-	(void)av;
 
-	// if (ac != 2)
-	// 	return (ft_printf("usage: ./mod1 map\n"));
-	// if (!(getPoints(av[1])))
-		// return (ft_printf("Invalid map.\n"));
 	if (!(r = (t_render*)malloc(sizeof(t_render))))
 		exit(ft_printf("Could not malloc *r\n"));
 	if (!init_win(r))
 		exit(ft_printf("Could not initialize the window\n"));
 	if (ac == 2)
 	{
-		parser(av[1]);
+		if (!(parser(r, av[1])))
+			return (0);
+		if (!(initParticles(r)))
+			return (0);
 		if (!render(r))
 			return (0);
 	}
 	else
-		ft_printf("usage: mod1 [file]");
+		ft_printf("usage: mod1 [-obj] [file]");
 
 	glfwTerminate();
 }
