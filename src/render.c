@@ -6,7 +6,7 @@
 /*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/26 14:39:41 by fsabatie          #+#    #+#             */
-/*   Updated: 2018/04/01 20:24:50 by vlay             ###   ########.fr       */
+/*   Updated: 2018/04/06 22:40:33 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ int	render(t_render *r)
 	t_shader	*vertex;
 	t_shader	*frag;
 	GLuint		vao;
+	t_cube		*cube;
 
 	r->draw_mod = GL_TRIANGLES;
 	r->rotY = 0;
@@ -153,5 +154,6 @@ int	render(t_render *r)
 		glfwPollEvents();
 		glfwSwapBuffers(r->win);
 	}
+	t_cubeFree(cube);
 	return (0);
 }

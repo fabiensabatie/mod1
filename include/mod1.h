@@ -6,7 +6,7 @@
 /*   By: wwatkins <wwatkins@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 17:23:49 by wwatkins          #+#    #+#             */
-/*   Updated: 2018/04/01 18:37:07 by vlay             ###   ########.fr       */
+/*   Updated: 2018/04/06 21:18:04 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <OpenCL/opencl.h>
 
 # define LOG_BUFFSIZE 10000000
+# define IX(x, y, z) ((x) + (y) * N + (z) * N * N)
 
 typedef struct		s_shader
 {
@@ -65,6 +66,25 @@ typedef struct	s_render
 	int			m_height;
 }				t_render;
 
+typedef struct s_cube
+{
+	int size;
+	float dt;
+	float diff;
+	float visc;
+
+	float *s;
+	float *density;
+
+	float *Vx;
+	float *Vy;
+	float *Vz;
+
+	float *Vx0;
+	float *Vy0;
+	float *Vz0;
+}				t_cube;
+
 int				init_win(t_render *r);
 int				render(t_render *r);
 t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
@@ -74,6 +94,11 @@ float			**parser(t_render *r, char *path);
 void			event(GLFWwindow* window, int key, int scancode, int action, \
 				int mods);
 t_pcl			**initParticles(t_render *r);
-void 			updateParticlesState(t_render *r);
+void			updateParticlesState(t_render *r);
+t_cube			*t_cubeCreate(int size, int diffusion, int viscosity, float dt);
+void			t_cubeFree(t_cube *cube);
+void			t_cubeAddDensity(t_cube *cube, int x, int y, int z, float amount);
+void			t_cubeAddVelocity(t_cube *cube, int x, int y, int z, float amountX, float amountY, float amountZ);
+void			t_cubeStep(t_cube *cube);
 
 #endif
