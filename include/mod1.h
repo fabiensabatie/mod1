@@ -15,6 +15,7 @@
 # include "libft.h"
 # include <math.h>
 # include <GLFW/glfw3.h>
+# include <OpenCL/opencl.h>
 
 # define LOG_BUFFSIZE 10000000
 

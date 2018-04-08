@@ -37,6 +37,7 @@ void	event(GLFWwindow* window, int key, int scancode, int action, \
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 		r->psy++;
 	}
-
-
+	if (key == GLFW_KEY_I && action == GLFW_PRESS) {
+		initParticles(r);
+	}
 }
