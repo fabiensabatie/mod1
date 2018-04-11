@@ -138,57 +138,19 @@ int	render(t_render *r)
 		return (0);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	processKernel(r);
-	// clock_t t;
-	// double time_taken2;
-	// clock_t t2;
-	// double time_taken;
 	glUseProgram(vertex->prog);
 	glfwSetWindowUserPointer(r->win, r);
 	while (!glfwWindowShouldClose(r->win))
 	{
-		// t2 = clock();
-		// t = clock();
 			vao = createBuffer(r);
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("createBuffer() took %f seconds to execute\n", time_taken);
-		// t = clock();
+
 			processKernel(r);
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("processKernel() took %f seconds to execute\n", time_taken);
-		// updateParticlesState(r);
-		// t = clock();
 			glfwSetKeyCallback(r->win, event);
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("glfwSetKeyCallback() took %f seconds to execute\n", time_taken);
-		//set_Uniforms(r, vertex);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// t = clock();
 			glBindVertexArray(vao);
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("glBindVertexArray() took %f seconds to execute\n", time_taken);
-		// glDrawArrays(r->draw_mod, 0, 58806);
-		// t = clock();
 			glDrawArrays(GL_POINTS, 0, r->part_number);
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("glDrawArrays() took %f seconds to execute\n", time_taken);
-		// t = clock();
 			glfwPollEvents();
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("glfwPollEvents() took %f seconds to execute\n", time_taken);
-		// t = clock();
 			glfwSwapBuffers(r->win);
-		// t = clock() - t;
-		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-		// printf("glfwSwapBuffers() took %f seconds to execute\n", time_taken);
-		// t2 = clock() - t2;
-		// time_taken2 = ((double)t2)/CLOCKS_PER_SEC; // in seconds
-		// printf("loop() took %f seconds to execute\n", time_taken2);
 	}
 	return (0);
 }

@@ -23,9 +23,9 @@ t_pcl *initParticles(t_render *r)
 
 	if (!(particles = (t_pcl*)malloc(sizeof(t_pcl) * 20000000)))
 		return (NULL);
-	for(float z = EPS; z <= CUBEZ-EPS*2.f; z += HP)
-		for(float y = EPS; y <= CUBEY-EPS*2.f; y += HP * 2)
-			for(float x = EPS; x <= CUBEX-EPS*2.f; x += HP * 2) {
+	for(float z = EPS; z <= 2000-EPS*2.f; z += HP)
+		for(float y = EPS; y <= 2000-EPS*2.f; y += HP)
+			for(float x = EPS; x <= 2000-EPS*2.f; x += HP) {
 				particles[i].group = 0;
 				particles[i].vx = 0.f;
 				particles[i].vy = 0.f;

@@ -28,7 +28,7 @@ int main(int ac, char **av)
 			return (0);
 	}
 	else if (!(ft_strcmp(av[1], "GPU"))) {
-		if (!(r->k = (t_kernel*)build_kernel(r, "rsc/kernels/particles.cl"))
+		if (!(r->k = (t_kernel*)build_kernel("rsc/kernels/particles.cl"))
 		|| !(initParticles(r))
 		|| !(render(r)))
 			return (0);

@@ -19,9 +19,7 @@
 
 # define LOG_BUFFSIZE 10000000
 # define IX(x, y, z) ((x) + (y) * N + (z) * N * N)
-# define CUBEX 2000
-# define CUBEY 2000
-# define CUBEZ 2000
+
 
 
 typedef struct		s_shader
@@ -72,7 +70,7 @@ typedef struct	s_pcl {
 	float		fz; // Velocity
 	float		rho; // Density
 	float		p; // Pressure
-	size_t		group;
+	int			group;
 }				t_pcl;
 
 typedef struct	s_render
@@ -104,6 +102,6 @@ t_pcl			*initParticles(t_render *r);
 void			updateParticlesState(t_render *r);
 GLchar			*getFileSource(char *filename);
 int				processKernel(t_render *r);
-t_kernel		*build_kernel(t_render *r, char *path);
+t_kernel		*build_kernel(char *path);
 
 #endif
