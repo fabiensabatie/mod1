@@ -19,6 +19,10 @@
 
 # define LOG_BUFFSIZE 10000000
 # define IX(x, y, z) ((x) + (y) * N + (z) * N * N)
+# define CUBEX 2000
+# define CUBEY 2000
+# define CUBEZ 2000
+
 
 typedef struct		s_shader
 {
@@ -35,6 +39,20 @@ typedef struct		s_shader
 	}				info;
 }					t_shader;
 
+typedef struct		s_kernel
+{
+	cl_program			prog;
+	cl_int				ret;
+	cl_context			context;
+	cl_command_queue 	command_queue;
+	cl_kernel			kernel;
+	cl_device_id		device_id;
+	cl_mem				particles_mem_obj;
+	cl_mem				p_mem_obj;
+	cl_mem				pcls_mem_obj;
+}					t_kernel;
+
+
 typedef struct	s_vec3D {
 
 	float		x;
@@ -43,19 +61,26 @@ typedef struct	s_vec3D {
 }				vec3D;
 
 typedef struct	s_pcl {
-
-	vec3D		pos; // Position
-	vec3D		v; // Velocity
-	vec3D		f; // Forces (gravity)
+	float		posx; // Position
+	float		posy;
+	float		posz;
+	float		vx; // Velocity
+	float		vy; // Velocity
+	float		vz; // Velocity
+	float		fx; // Velocity
+	float		fy; // Velocity
+	float		fz; // Velocity
 	float		rho; // Density
 	float		p; // Pressure
+	size_t		group;
 }				t_pcl;
 
 typedef struct	s_render
 {
 	GLFWwindow	*win;
 	float		**points;
-	t_pcl		**particles;
+	t_pcl		*particles;
+	t_kernel	*k;
 	size_t		part_number;
 	int			size;
 	float		zmax;
@@ -66,24 +91,6 @@ typedef struct	s_render
 	int			m_height;
 }				t_render;
 
-typedef struct s_cube
-{
-	int size;
-	float dt;
-	float diff;
-	float visc;
-
-	float *s;
-	float *density;
-
-	float *Vx;
-	float *Vy;
-	float *Vz;
-
-	float *Vx0;
-	float *Vy0;
-	float *Vz0;
-}				t_cube;
 
 int				init_win(t_render *r);
 int				render(t_render *r);
@@ -93,12 +100,10 @@ float			interpolation(short n, float **points, float X, float Y);
 float			**parser(t_render *r, char *path);
 void			event(GLFWwindow* window, int key, int scancode, int action, \
 				int mods);
-t_pcl			**initParticles(t_render *r);
+t_pcl			*initParticles(t_render *r);
 void			updateParticlesState(t_render *r);
-t_cube			*t_cubeCreate(int size, int diffusion, int viscosity, float dt);
-void			t_cubeFree(t_cube *cube);
-void			t_cubeAddDensity(t_cube *cube, int x, int y, int z, float amount);
-void			t_cubeAddVelocity(t_cube *cube, int x, int y, int z, float amountX, float amountY, float amountZ);
-void			t_cubeStep(t_cube *cube);
+GLchar			*getFileSource(char *filename);
+int				processKernel(t_render *r);
+t_kernel		*build_kernel(t_render *r, char *path);
 
 #endif

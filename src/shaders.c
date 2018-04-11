@@ -12,7 +12,7 @@
 
 #include "mod1.h"
 
-GLchar		*getShaderSource(char *filename)
+GLchar		*getFileSource(char *filename)
 {
 	char	*line;
 	char	*src;
@@ -57,7 +57,7 @@ t_shader	*build_shader(char *filename, GLenum type, GLuint prog_id, \
 		return (0);
 	// Recuperation des id pour les vertex / fragment shaders
 	if (!(s->id = glCreateShader(type))
-		|| !(s->src = getShaderSource(filename)))
+		|| !(s->src = getFileSource(filename)))
 		return (0);
 	// Assignation de sa source au shader
 	glShaderSource(s->id, 1, (const char *const *)&(s->src), 0);

@@ -20,17 +20,21 @@ int main(int ac, char **av)
 		exit(ft_printf("Could not malloc *r\n"));
 	if (!init_win(r))
 		exit(ft_printf("Could not initialize the window\n"));
-	if (ac == 2)
+	if (ac == 2 && ft_strcmp(av[1], "GPU"))
 	{
-		if (!(parser(r, av[1])))
-			return (0);
-		if (!(initParticles(r)))
-			return (0);
-		if (!render(r))
+		if (!(parser(r, av[1]))
+		|| !(initParticles(r))
+		|| !(render(r)))
 			return (0);
 	}
-	else
-		ft_printf("usage: mod1 [-obj] [file]");
-
+	else if (!(ft_strcmp(av[1], "GPU"))) {
+		if (!(r->k = (t_kernel*)build_kernel(r, "rsc/kernels/particles.cl"))
+		|| !(initParticles(r))
+		|| !(render(r)))
+			return (0);
+	}
+	else {
+		printf("usage: ./mod1 [GPU] map.mod1\n");
+	}
 	glfwTerminate();
 }

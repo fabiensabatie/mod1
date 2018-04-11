@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 
 #include "mod1.h"
-#define VERTEX "shaders/particles.vert"
-#define FRAG_G "shaders/green.frag"
-#define FRAG_B "shaders/blue.frag"
+#define VERTEX "rsc/shaders/particles.vert"
+#define FRAG_G "rsc/shaders/green.frag"
+#define FRAG_B "rsc/shaders/blue.frag"
 
 static GLuint createVAO(void)
 {
@@ -80,9 +80,9 @@ GLuint createBuffer(t_render *r)
 	size_t i = 0;
 	size_t y = 0;
 	while (i < r->part_number * 3) {
-		res[i++] = r->particles[y]->pos.x / 2000 - 0.5;
-		res[i++] = r->particles[y]->pos.y / 2000 - 0.5;
-		res[i++] = r->particles[y]->pos.z / 2000 - 0.5;
+		res[i++] = r->particles[y].posx / 2000 - 0.5;
+		res[i++] = r->particles[y].posy / 2000 - 0.5;
+		res[i++] = r->particles[y].posz / 2000 - 0.5;
 		y++;
 	}
 
@@ -126,7 +126,6 @@ int	render(t_render *r)
 	t_shader	*vertex;
 	t_shader	*frag;
 	GLuint		vao;
-	t_cube		*cube;
 
 	r->draw_mod = GL_TRIANGLES;
 	r->rotY = 0;
@@ -138,22 +137,58 @@ int	render(t_render *r)
 	if (!(frag = build_shader(FRAG_G, GL_FRAGMENT_SHADER, vertex->prog, TRUE)))
 		return (0);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
+	processKernel(r);
+	// clock_t t;
+	// double time_taken2;
+	// clock_t t2;
+	// double time_taken;
+	glUseProgram(vertex->prog);
 	glfwSetWindowUserPointer(r->win, r);
 	while (!glfwWindowShouldClose(r->win))
 	{
-		vao = createBuffer(r);
-
-		updateParticlesState(r);
-		glfwSetKeyCallback(r->win, event);
-		set_Uniforms(r, vertex);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(vertex->prog);
-		glBindVertexArray(vao);
+		// t2 = clock();
+		// t = clock();
+			vao = createBuffer(r);
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("createBuffer() took %f seconds to execute\n", time_taken);
+		// t = clock();
+			processKernel(r);
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("processKernel() took %f seconds to execute\n", time_taken);
+		// updateParticlesState(r);
+		// t = clock();
+			glfwSetKeyCallback(r->win, event);
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("glfwSetKeyCallback() took %f seconds to execute\n", time_taken);
+		//set_Uniforms(r, vertex);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// t = clock();
+			glBindVertexArray(vao);
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("glBindVertexArray() took %f seconds to execute\n", time_taken);
 		// glDrawArrays(r->draw_mod, 0, 58806);
-		glDrawArrays(GL_POINTS, 0, r->part_number);
-		glfwPollEvents();
-		glfwSwapBuffers(r->win);
+		// t = clock();
+			glDrawArrays(GL_POINTS, 0, r->part_number);
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("glDrawArrays() took %f seconds to execute\n", time_taken);
+		// t = clock();
+			glfwPollEvents();
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("glfwPollEvents() took %f seconds to execute\n", time_taken);
+		// t = clock();
+			glfwSwapBuffers(r->win);
+		// t = clock() - t;
+		// time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+		// printf("glfwSwapBuffers() took %f seconds to execute\n", time_taken);
+		// t2 = clock() - t2;
+		// time_taken2 = ((double)t2)/CLOCKS_PER_SEC; // in seconds
+		// printf("loop() took %f seconds to execute\n", time_taken2);
 	}
-	t_cubeFree(cube);
 	return (0);
 }

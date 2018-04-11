@@ -221,7 +221,7 @@ t_list				*ft_lstpop(t_list **alst, size_t n);
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 t_list				*ft_lstnew(void const *content, size_t content_size);
 wchar_t				*ft_wstrnsub(wchar_t *s, int n);
-t_list				*ft_lstlink(void *content, size_t content_size);
+t_list				*ft_lstlink(void *content, size_t content_size, size_t size);
 char				*ft_strpbrk(const char *s, const char *accept);
 int					get_next_word(int fd, char **word, char *seperator);
 int					ft_strappend(char **s1, char *s2);
