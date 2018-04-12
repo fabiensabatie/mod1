@@ -21,11 +21,16 @@ t_pcl *initParticles(t_render *r)
 	int i = 0;
 	float EPS = HP; // boundary epsilon
 
-	if (!(particles = (t_pcl*)malloc(sizeof(t_pcl) * 20000000)))
+	if (!(particles = (t_pcl*)malloc(sizeof(t_pcl) * 200000)))
 		return (NULL);
-	for(float z = EPS; z <= 2000-EPS*2.f; z += HP)
-		for(float y = EPS; y <= 2000-EPS*2.f; y += HP)
+	for(float z = EPS; z <= 2000-EPS*2.f; z += HP * 2)
+		for(float y = EPS; y <= 2000-EPS*2.f; y += HP * 2)
 			for(float x = EPS; x <= 2000-EPS*2.f; x += HP) {
+				particles[i].rho = 0;
+				particles[i].p = 0;
+				particles[i].fx = 0;
+				particles[i].fy = 0;
+				particles[i].fz = 0;
 				particles[i].group = 0;
 				particles[i].vx = 0.f;
 				particles[i].vy = 0.f;

@@ -50,9 +50,8 @@ typedef struct		s_kernel
 	cl_mem				pcls_mem_obj;
 }					t_kernel;
 
-
-typedef struct	s_vec3D {
-
+typedef struct	s_vec3D
+{
 	float		x;
 	float		y;
 	float		z;
@@ -72,6 +71,12 @@ typedef struct	s_pcl {
 	float		p; // Pressure
 	int			group;
 }				t_pcl;
+
+typedef struct	s_grp
+{
+	char		*id;
+	t_pcl		*pcl;
+}				t_grp;
 
 typedef struct	s_render
 {

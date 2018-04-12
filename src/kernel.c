@@ -138,7 +138,7 @@ int processKernel(t_render *r)
 	t_pcl *pcls;
 	size_t *p = &(r->part_number);
 
-	particles = sort_pcl(r, particles);
+	// particles = sort_pcl(r, particles);
 	if (!(pcls = (t_pcl*)malloc(sizeof(t_pcl) * r->part_number)))
 		return (0);
 	k->particles_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
@@ -153,8 +153,13 @@ int processKernel(t_render *r)
 	size_t local_item_size = 32; // Divide work items into groups of 64
 	clEnqueueNDRangeKernel(k->command_queue, k->kernel, 1, NULL, &global_item_size, &local_item_size, 0, NULL, NULL);
 	clEnqueueReadBuffer(k->command_queue, k->pcls_mem_obj, CL_TRUE, 0, r->part_number * sizeof(t_pcl), pcls, 0, NULL, NULL);
-	free(particles);
-	free(r->particles);
+	// free(particles);
+	// free(r->particles);
+	float f = 0;
+	for (size_t i = 0; i < r->part_number; i++) {
+		f += fabs(pcls[i].vx) + fabs(pcls[i].vy) + fabs(pcls[i].vz);
+	}
+	printf("Forces: %f\n", f);
 	r->particles = pcls;
 	return 0;
 }
