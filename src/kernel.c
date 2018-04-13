@@ -137,29 +137,34 @@ int processKernel(t_render *r)
 	t_pcl *particles = r->particles;
 	t_pcl *pcls;
 	size_t *p = &(r->part_number);
-
+	static float energy = 0;
 	// particles = sort_pcl(r, particles);
 	if (!(pcls = (t_pcl*)malloc(sizeof(t_pcl) * r->part_number)))
 		return (0);
-	k->particles_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
-	k->p_mem_obj = clCreateBuffer(k->context, CL_MEM_READ_ONLY, sizeof(size_t), NULL, &(k->ret));
-	k->pcls_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
-	clEnqueueWriteBuffer(k->command_queue, k->particles_mem_obj, CL_FALSE, 0, r->part_number * sizeof(t_pcl), particles, 0, NULL, NULL);
-	clEnqueueWriteBuffer(k->command_queue, k->p_mem_obj, CL_FALSE, 0, sizeof(size_t), p, 0, NULL, NULL);
-	clSetKernelArg(k->kernel, 0, sizeof(cl_mem), (void *)&(k->particles_mem_obj));
-	clSetKernelArg(k->kernel, 1, sizeof(cl_mem), (void *)&(k->p_mem_obj));
-	clSetKernelArg(k->kernel, 2, sizeof(cl_mem), (void *)&(k->pcls_mem_obj));
+	cl_mem particles_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
+	cl_mem p_mem_obj = clCreateBuffer(k->context, CL_MEM_READ_ONLY, sizeof(size_t), NULL, &(k->ret));
+	cl_mem pcls_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
+	cl_mem energy_obj = clCreateBuffer(k->context, CL_MEM_READ_ONLY, sizeof(float), NULL, &(k->ret));
+	clEnqueueWriteBuffer(k->command_queue, particles_mem_obj, CL_FALSE, 0, r->part_number * sizeof(t_pcl), particles, 0, NULL, NULL);
+	clEnqueueWriteBuffer(k->command_queue, p_mem_obj, CL_FALSE, 0, sizeof(size_t), p, 0, NULL, NULL);
+	clEnqueueWriteBuffer(k->command_queue, energy_obj, CL_FALSE, 0, sizeof(float), &energy, 0, NULL, NULL);
+	clSetKernelArg(k->kernel, 0, sizeof(cl_mem), (void *)&(particles_mem_obj));
+	clSetKernelArg(k->kernel, 1, sizeof(cl_mem), (void *)&(p_mem_obj));
+	clSetKernelArg(k->kernel, 2, sizeof(cl_mem), (void *)&(pcls_mem_obj));
+	clSetKernelArg(k->kernel, 3, sizeof(cl_mem), (void *)&(energy_obj));
 	size_t global_item_size = 32 - (r->part_number % 32) + (r->part_number); // Process the entire lists
 	size_t local_item_size = 32; // Divide work items into groups of 64
 	clEnqueueNDRangeKernel(k->command_queue, k->kernel, 1, NULL, &global_item_size, &local_item_size, 0, NULL, NULL);
-	clEnqueueReadBuffer(k->command_queue, k->pcls_mem_obj, CL_TRUE, 0, r->part_number * sizeof(t_pcl), pcls, 0, NULL, NULL);
+	clEnqueueReadBuffer(k->command_queue, pcls_mem_obj, CL_TRUE, 0, r->part_number * sizeof(t_pcl), pcls, 0, NULL, NULL);
 	// free(particles);
 	// free(r->particles);
-	float f = 0;
-	for (size_t i = 0; i < r->part_number; i++) {
-		f += fabs(pcls[i].vx) + fabs(pcls[i].vy) + fabs(pcls[i].vz);
-	}
-	printf("Forces: %f\n", f);
+	// for (size_t i = 0; i < r->part_number; i++) {
+	// 	printf("%f %f %f\n", pcls[i].posx, pcls[i].posy, pcls[i].posz);
+	// }
+	// printf("Forces: %f\n", f);
 	r->particles = pcls;
+	energy += 0.0000005;
+	if (energy > 0.0018)
+		energy = 0.0018;
 	return 0;
 }

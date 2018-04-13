@@ -26,14 +26,14 @@ typedef struct	s_pcl {
 #define REST_DENS 100.f // rest density
 #define GAS_CONST 2000.f // const for equation of state
 #define HP 100.f // kernel radius
-#define MASS 20.f // assume all particles have the same mass
-#define VISC 400.f // viscosity constant
-#define DT 0.001f // integration timestep
-#define BOUND_DAMPING -0.05f
+#define MASS 2.f // assume all particles have the same mass
+#define VISC 50.f // viscosity constant
+#define DT 0.0018f // integration timestep
+#define BOUND_DAMPING -1.f
 #define T_PI 3.14159265358979323846
 
 __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
-	, __global t_pcl *pcls) {
+	, __global t_pcl *pcls, __global float *energy) {
 	int i = get_global_id(0);
 	float EPS = HP;
 	float djix;
@@ -41,12 +41,12 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 	float djiz;
 	float resolver = 0.f;
 	float poly;
-	float HSQ = HP*HP*60; // radius^2 for optimization
+	float HSQ = HP*HP*60;// // radius^2 for optimization
 	float sp;
 	float vl;
 	vec3D fgrav;
-
-
+	float en = (float)(DT - *energy);
+	// printf("DT: %f\n", en);
 	size_t s = (size_t)i;
 	size_t e = (size_t)i;
 	// Get the index of the current element to be processed
@@ -65,13 +65,14 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 		djix = particles[j].posx - particles[i].posx;
 		djiy = particles[j].posy - particles[i].posy;
 		djiz = particles[j].posz - particles[i].posz;
-		resolver = powf(djix, 2) + powf(djiy, 2) + powf(djiz, 2); //+ pow(djiz, 2);
+		resolver = fabs(powf(djix, 2) + powf(djiy, 2) + powf(djiz, 2)); //+ pow(djiz, 2);
 		if(resolver < HSQ)
 			particles[i].rho += MASS * poly * powf(HSQ - resolver, 2.f);
 	}
 	particles[i].p = GAS_CONST * (particles[i].rho - REST_DENS);
 	vec3D fpress = {0.f, 0.f, 0.f};
 	vec3D fvisc = {0.f, 0.f, 0.f};
+	size_t counter = 0;
 	for (size_t j = s; j < e; j++)
 	{
 		if(i == (int)j)
@@ -79,17 +80,21 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 		djix = particles[j].posx - particles[i].posx;
 		djiy = particles[j].posy - particles[i].posy;
 		djiz = particles[j].posz - particles[i].posz;
-		resolver = sqrt(powf(djix, 2) + powf(djiy, 2) + powf(djiz, 2));
-		if(resolver < HP && resolver != 0 && particles[j].rho != 0.f)
+		resolver = sqrt(fabs(powf(djix, 2) + powf(djiy, 2) + powf(djiz, 2)));
+		if(resolver < HP && resolver != 0.f && particles[j].rho != 0.f)
 		{
+			counter++;
 			fpress.x += -djix / resolver * MASS * (particles[i].p + particles[j].p) /(2.f * particles[j].rho) * sp * powf(HP - resolver,2.f);
 			fpress.y += -djiy / resolver * MASS * (particles[i].p + particles[j].p) /(2.f * particles[j].rho) * sp * powf(HP - resolver,2.f);
 			fpress.z += -djiz / resolver * MASS * (particles[i].p + particles[j].p) /(2.f * particles[j].rho) * sp * powf(HP - resolver,2.f);
 			fvisc.x += VISC * MASS * (particles[j].vx - particles[i].vx) / particles[j].rho * vl * (HP - resolver);
 			fvisc.y += VISC * MASS * (particles[j].vy - particles[i].vy) / particles[j].rho * vl * (HP - resolver);
 			fvisc.z += VISC * MASS * (particles[j].vz - particles[i].vz) / particles[j].rho * vl * (HP - resolver);
+			// if (fvisc.z > 10000)
+			// 	printf("Reached with: %f %f %f %f %f %f %f %f\n", VISC , MASS , particles[j].vz , particles[i].vz, particles[j].rho ,vl , HP, resolver);
 		}
 	}
+	// printf("For %li passed %li times\n", i, counter);
 	fgrav.x = 0;
 	fgrav.y = 0;
 	fgrav.z = G2 * particles[i].rho;
@@ -100,41 +105,53 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 		particles[i].vx += DT * particles[i].fx / particles[i].rho;
 		particles[i].vy += DT * particles[i].fy / particles[i].rho;
 		particles[i].vz += DT * particles[i].fz / particles[i].rho;
+		if (particles[i].vz > 10000)
+			particles[i].vz = 10000;
+		if (particles[i].vz < -10000)
+			particles[i].vz = -10000;
+		if (particles[i].vy > 10000)
+			particles[i].vy = 10000;
+		if (particles[i].vy < -10000)
+			particles[i].vy = -10000;
+		if (particles[i].vx > 10000)
+			particles[i].vx = 10000;
+		if (particles[i].vx < -10000)
+			particles[i].vx = -10000;
 	}
 	particles[i].posx += DT * particles[i].vx;
 	particles[i].posy += DT * particles[i].vy;
 	particles[i].posz += DT * particles[i].vz;
 
 	// enforce boundary conditions
-	if(particles[i].posx - EPS < 0.0f)
+	if(particles[i].posx - EPS <= 0.0f)
 	{
-		particles[i].vx  *= BOUND_DAMPING;
-		particles[i].posx = EPS + (float)cos((float)i);
+		particles[i].vx  *= BOUND_DAMPING + 0.6;
+		particles[i].posx = EPS + fabs((float)cos((float)i) * 10);
 	}
-	if(particles[i].posx + EPS > 2000)
+	if(particles[i].posx + EPS >= 2000)
 	{
-		particles[i].vx *= BOUND_DAMPING;
-		particles[i].posx = 2000 - EPS - (float)cos((float)i);
+		particles[i].vx *= BOUND_DAMPING+ 0.6;
+		particles[i].posx = 2000 - EPS - fabs((float)cos((float)i) * 10);
 	}
-	if(particles[i].posy - EPS < 0.0f)
+	if(particles[i].posy - EPS <= 0.0f)
 	{
-		particles[i].vy *= BOUND_DAMPING;
-		particles[i].posy = EPS + (float)cos((float)i);
+		particles[i].vy *= BOUND_DAMPING+ 0.6;
+		particles[i].posy = EPS + fabs((float)cos((float)i) * 10);
 	}
-	if(particles[i].posy + EPS > 2000)
+	if(particles[i].posy + EPS >= 2000)
 	{
-		particles[i].vy *= BOUND_DAMPING;
-		particles[i].posy = 2000 - EPS - (float)cos((float)i);
+		particles[i].vy *= BOUND_DAMPING+ 0.6;
+		particles[i].posy = 2000 - EPS - fabs((float)cos((float)i) * 10);
 	}
-	if(particles[i].posz - EPS < 0.0f)
+	if(particles[i].posz - EPS <= 0.0f)
 	{
-		particles[i].vz *= BOUND_DAMPING;
-		particles[i].posz = EPS + (float)cos((float)i);
+		particles[i].vz *= BOUND_DAMPING+ 0.2;
+		particles[i].posz = EPS + fabs((float)cos((float)i) * 10);
 	}
-	if(particles[i].posz + EPS > 2000)
+	if(particles[i].posz + EPS >= 2000)
 	{
-		particles[i].vz *= BOUND_DAMPING;
-		particles[i].posz = 2000 - EPS - (float)cos((float)i);
+		particles[i].vz *= BOUND_DAMPING+ 0.2;
+		particles[i].posz = 2000 - EPS - fabs((float)cos((float)i) * 10);
 	}
 
 	pcls[i].posx = particles[i].posx;

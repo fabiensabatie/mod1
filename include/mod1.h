@@ -48,6 +48,7 @@ typedef struct		s_kernel
 	cl_mem				particles_mem_obj;
 	cl_mem				p_mem_obj;
 	cl_mem				pcls_mem_obj;
+	cl_mem				energy_obj;
 }					t_kernel;
 
 typedef struct	s_vec3D

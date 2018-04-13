@@ -29,5 +29,5 @@ void main()
 	gl_Position = rotZ * vec4(aPos, 1.0);
 	gl_Position = rotX * gl_Position;
 	ourColor = vec3(gl_Position.x + 0.5, gl_Position.y + 0.5, gl_Position.z + 0.5);
-	gl_PointSize = 3.0; // set ourColor to the input color we got from the vertex data
+	gl_PointSize = 2.0; // set ourColor to the input color we got from the vertex data
 }

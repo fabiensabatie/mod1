@@ -25,7 +25,7 @@ t_pcl *initParticles(t_render *r)
 		return (NULL);
 	for(float z = EPS; z <= 2000-EPS*2.f; z += HP * 2)
 		for(float y = EPS; y <= 2000-EPS*2.f; y += HP * 2)
-			for(float x = EPS; x <= 2000-EPS*2.f; x += HP) {
+			for(float x = EPS; x <= 2000-EPS*2.f; x += HP * 2) {
 				particles[i].rho = 0;
 				particles[i].p = 0;
 				particles[i].fx = 0;
@@ -35,12 +35,12 @@ t_pcl *initParticles(t_render *r)
 				particles[i].vx = 0.f;
 				particles[i].vy = 0.f;
 				particles[i].vz = 0.f;
-				particles[i].posx = x + (float)rand() / (float)RAND_MAX * 3;
-				particles[i].posy = y + (float)rand() / (float)RAND_MAX * 3;
-				particles[i++].posz = z + (float)rand() / (float)RAND_MAX * 3;
+				particles[i].posx = x + (float)rand() / (float)RAND_MAX;
+				particles[i].posy = y + (float)rand() / (float)RAND_MAX;
+				particles[i++].posz = z + (float)rand() / (float)RAND_MAX;
 			}
 	r->part_number = i;
-	printf("Got %li particles\n", r->part_number);
+	// printf("Got %li particles\n", r->part_number);
 	r->particles = particles;
 	return (particles);
 }
