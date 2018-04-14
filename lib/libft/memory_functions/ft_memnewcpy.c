@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd.c                                        :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/10 12:51:35 by fsabatie          #+#    #+#             */
-/*   Updated: 2018/02/16 13:57:32 by fsabatie         ###   ########.fr       */
+/*   Created: 2017/11/07 21:29:08 by fsabatie          #+#    #+#             */
+/*   Updated: 2018/01/25 14:51:24 by fsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-/*
-** Ajoute l’élément new en tête de la liste.
-*/
 
-void	ft_lstadd(t_list **alst, t_list *new)
+void	*ft_memnewcpy(void *src, size_t n, size_t len)
 {
-	t_list *start;
+	unsigned char *dest;
 
-	if (*alst && new) {
-		start = new;
-		while (new->next)
-			new = new->next;
-		new->next = *alst;
-		*alst = start;
-	}
+	if (!(dest = (unsigned char*)malloc(n * len)))
+		return (NULL);
+	ft_memcpy(dest, src, n * len);
+	return ((void*)dest);
 }

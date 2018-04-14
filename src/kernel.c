@@ -51,83 +51,96 @@ t_kernel *build_kernel(char *file) {
 }
 
 
-t_list *ft_searchlist(t_list *lst, size_t hash)
+t_list *ft_searchlist(t_list *lst, int coord[3])
 {
+	size_t i = 0;
 	if (!lst)
 		return (NULL);
 	while (lst) {
-		if (lst->content_size == hash){
-			return ((t_list*)lst->content);
+		if (i % 2 == 0) {
+			int *c = (int*)lst->content;
+			if (c[0] == coord[0] && c[1] == coord[1] && c[2] == coord[2]){
+				return ((t_list*)lst);
+			}
 		}
 		lst = lst->next;
+		i++;
 	}
 	return (NULL);
 }
 
-t_pcl *sort_pcl(t_render *r, t_pcl *pcls)
+t_grp *sort_pcl(t_render *r, t_pcl *pcls)
 {
-	float HP = 100;
+	float	HP = 100;
 	float	interval = (2000-HP)/HP;
-	t_list *list = NULL;
-	t_list *group;
-	size_t pc = 0;
-	size_t hash;
-	size_t g = 0;
-	t_pcl *pcl;
+	t_list	*list = NULL;
+	t_list	*group;
+	size_t	pc = 0;
+	size_t	g = 0;
+	int		coord[3];
+	t_grp *grps;
 
-	if (!(pcl = (t_pcl*)malloc(sizeof(t_pcl) * r->part_number)))
-		return (NULL);
 	for (size_t i = 0; i < r->part_number; i++)
 	{
-		size_t x = 0, y = 0, z = 0;
+		coord[0] = 0;
+		coord[1] = 0;
+		coord[2] = 0;
 		for (float j = 0; interval * j + HP < 1000; j++)
 		{
 			if (interval * j + HP > pcls[i].posx)
-				x = (x == 0) ? j - 1 : x;
+				coord[0] = (coord[0] == 0) ? j - 1 : coord[0];
 			if (interval * j + HP > pcls[i].posy)
-				y = (y == 0) ? j - 1 : y;
+				coord[1] = (coord[1] == 0) ? j - 1 : coord[1];
 			if (interval * j + HP > pcls[i].posz)
-				z = (z == 0) ? j - 1 : z;
+				coord[2] = (coord[2] == 0) ? j - 1 : coord[2];
 		}
-		hash = x + y * 1000 + z * 10000;
-		if (!(group = ft_searchlist(list, hash))) { // The group doesn not exist in the list
-			group = ft_lstlink(ft_lstlink(&pcls[i], hash), hash);
-			if (!list){
-				list = group;
-			}
+		if (!(group = ft_searchlist(list, coord))) { // The group doesn not exist in the list
+			t_list *coordinates = ft_lstlink(ft_memnewcpy(coord, sizeof(int), 3), 1);
+			group = ft_lstlink(ft_lstlink(&pcls[i], i), 0);
+			g++;
+			ft_lstpushback(coordinates, group);
+			if (!list)
+				list = coordinates;
 			else
-				ft_lstpushback(list, group);
+				ft_lstadd(&list, coordinates);
 		}
 		else {
-			t_list *new = ft_lstlink(&pcls[i], hash);
-			ft_lstpushback(group, new);
+			(group->content_size)++;
+			group = group->next;
+			t_list *new = ft_lstlink(&pcls[i], i);
+			ft_lstpushback(group->content, new);
 			pc++;
 		}
 	}
-	g = 0;
-	pc = 0;
+	if (!(grps = (t_grp*)malloc(sizeof(t_grp) * g)))
+		return (NULL);
+	r->grp_n = g;
 	group = list;
-	t_list *p_list;
-	t_list *p_group;
-	t_list *prev_list;
-	while (group)
-	{
-		p_group = group;
-		p_list = (t_list*)group->content;
-		while (p_list) {
-			prev_list = p_list;
-			t_pcl *p = p_list->content;
-			pcl[pc] = *p;
-			pcl[pc++].group = (int)g;
-			p_list = p_list->next;
-			free(prev_list);
-		}
+	t_list *prevg;
+	t_list *prevp;
+	g = 0;
+	while (group) {
+		prevg = group;
+		grps[g].coord[0] = ((int*)group->content)[0];
+		grps[g].coord[1] = ((int*)group->content)[1];
+		grps[g].coord[2] = ((int*)group->content)[2];
+		grps[g].groups = r->grp_n;
+		grps[g].pcls = group->content_size;
 		group = group->next;
-		free(p_group);
+		free(prevg);
+		prevg = group;
+		t_list *p_list = (t_list*)group->content;
+		for (size_t i = 0; i < group->content_size; i++) {
+			prevp = p_list;
+			grps[g].pcl[i] = (int)p_list->content_size;
+			p_list = p_list->next;
+			free(prevp);
+		}
 		g++;
+		group = group->next;
+		free(prevg);
 	}
-	// printf("%li groups\n", g);
-	return (pcl);
+	return (grps);
 }
 
 
@@ -138,22 +151,30 @@ int processKernel(t_render *r)
 	t_pcl *pcls;
 	size_t *p = &(r->part_number);
 	static float energy = 0;
-	// particles = sort_pcl(r, particles);
+
+	r->groups = sort_pcl(r, particles);
+
+	// for (size_t i = 0; i < r->grp_n; i++) {
+	// 	printf("%i %i %i\n", r->groups[i].coord[0], r->groups[i].coord[1], r->groups[i].coord[2]);
+	// }
 	if (!(pcls = (t_pcl*)malloc(sizeof(t_pcl) * r->part_number)))
 		return (0);
 	cl_mem particles_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
 	cl_mem p_mem_obj = clCreateBuffer(k->context, CL_MEM_READ_ONLY, sizeof(size_t), NULL, &(k->ret));
 	cl_mem pcls_mem_obj = clCreateBuffer(k->context, CL_MEM_WRITE_ONLY, r->part_number * sizeof(t_pcl), NULL, &(k->ret));
 	cl_mem energy_obj = clCreateBuffer(k->context, CL_MEM_READ_ONLY, sizeof(float), NULL, &(k->ret));
+	cl_mem group_obj = clCreateBuffer(k->context, CL_MEM_READ_ONLY, sizeof(t_grp) * r->grp_n, NULL, &(k->ret));
 	clEnqueueWriteBuffer(k->command_queue, particles_mem_obj, CL_FALSE, 0, r->part_number * sizeof(t_pcl), particles, 0, NULL, NULL);
 	clEnqueueWriteBuffer(k->command_queue, p_mem_obj, CL_FALSE, 0, sizeof(size_t), p, 0, NULL, NULL);
 	clEnqueueWriteBuffer(k->command_queue, energy_obj, CL_FALSE, 0, sizeof(float), &energy, 0, NULL, NULL);
+	clEnqueueWriteBuffer(k->command_queue, group_obj, CL_FALSE, 0, sizeof(t_grp) * r->grp_n, r->groups, 0, NULL, NULL);
 	clSetKernelArg(k->kernel, 0, sizeof(cl_mem), (void *)&(particles_mem_obj));
 	clSetKernelArg(k->kernel, 1, sizeof(cl_mem), (void *)&(p_mem_obj));
 	clSetKernelArg(k->kernel, 2, sizeof(cl_mem), (void *)&(pcls_mem_obj));
 	clSetKernelArg(k->kernel, 3, sizeof(cl_mem), (void *)&(energy_obj));
-	size_t global_item_size = 32 - (r->part_number % 32) + (r->part_number); // Process the entire lists
-	size_t local_item_size = 32; // Divide work items into groups of 64
+	clSetKernelArg(k->kernel, 4, sizeof(cl_mem), (void *)&(group_obj));
+	size_t global_item_size = 128 - (r->part_number % 128) + (r->part_number); // Process the entire lists
+	size_t local_item_size = 128; // Divide work items into groups of 64
 	clEnqueueNDRangeKernel(k->command_queue, k->kernel, 1, NULL, &global_item_size, &local_item_size, 0, NULL, NULL);
 	clEnqueueReadBuffer(k->command_queue, pcls_mem_obj, CL_TRUE, 0, r->part_number * sizeof(t_pcl), pcls, 0, NULL, NULL);
 	// free(particles);

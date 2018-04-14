@@ -75,8 +75,10 @@ typedef struct	s_pcl {
 
 typedef struct	s_grp
 {
-	char		*id;
-	t_pcl		*pcl;
+	size_t		groups;
+	size_t		pcls;
+	int			coord[3];
+	int			pcl[100];
 }				t_grp;
 
 typedef struct	s_render
@@ -84,6 +86,7 @@ typedef struct	s_render
 	GLFWwindow	*win;
 	float		**points;
 	t_pcl		*particles;
+	t_grp		*groups;
 	t_kernel	*k;
 	size_t		part_number;
 	int			size;
@@ -93,6 +96,7 @@ typedef struct	s_render
 	float 		rotX;
 	int 		psy;
 	int			m_height;
+	size_t		grp_n;
 }				t_render;
 
 

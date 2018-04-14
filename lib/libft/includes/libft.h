@@ -185,6 +185,7 @@ void				*ft_memset(void *str, int c, size_t len);
 void				ft_lstpushback(t_list *alst, t_list *new);
 void				*ft_memcpy(void *dst, void *src, size_t n);
 void				*ft_memmove(void *dst, void *src, size_t n);
+void				*ft_memnewcpy(void *src, size_t n, size_t len);
 void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 void				*ft_nrealloc(void *old, size_t size, size_t elems);
 void				*ft_memccpy(void *dst, void *src, int c, size_t n);

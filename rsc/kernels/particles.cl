@@ -20,6 +20,15 @@ typedef struct	s_pcl {
 	int			group;
 }				t_pcl;
 
+typedef struct	s_grp
+{
+	size_t		groups;
+	size_t		pcls;
+	int			coord[3];
+	int			pcl[100];
+}				t_grp;
+
+
 // solver parameters
 #define G1 0.f // external (gravitational) forces
 #define G2 12000*-9.8f // external (gravitational) forces
@@ -33,7 +42,7 @@ typedef struct	s_pcl {
 #define T_PI 3.14159265358979323846
 
 __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
-	, __global t_pcl *pcls, __global float *energy) {
+	, __global t_pcl *pcls, __global float *energy, __global t_grp *groups) {
 	int i = get_global_id(0);
 	float EPS = HP;
 	float djix;
@@ -59,7 +68,12 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 		s--;
 	while (e < *pn && particles[e].group == particles[i].group)
 		e++;
-	// printf("Computing %li pcls\n", e-s);
+		if (i == 0) {
+			for (size_t l = 0; l < groups[0].groups; l++) {
+				printf("%li particles in group %li\n", groups[l].pcls, l);
+			}
+		}
+
 	for (size_t j = s; j < e; j++)
 	{
 		djix = particles[j].posx - particles[i].posx;
@@ -102,9 +116,9 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 	particles[i].fy = fpress.y + fvisc.y + fgrav.y;
 	particles[i].fz = fpress.z + fvisc.z + fgrav.z;
 	if (particles[i].rho != 0.f) {
-		particles[i].vx += DT * particles[i].fx / particles[i].rho;
-		particles[i].vy += DT * particles[i].fy / particles[i].rho;
-		particles[i].vz += DT * particles[i].fz / particles[i].rho;
+		particles[i].vx += en * particles[i].fx / particles[i].rho;
+		particles[i].vy += en * particles[i].fy / particles[i].rho;
+		particles[i].vz += en * particles[i].fz / particles[i].rho;
 		if (particles[i].vz > 10000)
 			particles[i].vz = 10000;
 		if (particles[i].vz < -10000)
@@ -118,9 +132,9 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn \
 		if (particles[i].vx < -10000)
 			particles[i].vx = -10000;
 	}
-	particles[i].posx += DT * particles[i].vx;
-	particles[i].posy += DT * particles[i].vy;
-	particles[i].posz += DT * particles[i].vz;
+	particles[i].posx += en * particles[i].vx;
+	particles[i].posy += en * particles[i].vy;
+	particles[i].posz += en * particles[i].vz;
 
 	// enforce boundary conditions
 	if(particles[i].posx - EPS <= 0.0f)
