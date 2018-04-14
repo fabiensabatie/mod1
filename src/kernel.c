@@ -5,7 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsabatie <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/26 14:37:32 by fsabatie          #+#    #+#             */
+/*   Created: 2018/03/26 14:37:32 by f
+sabatie          #+#    #+#             */
 /*   Updated: 2018/03/26 14:37:33 by fsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -13,7 +14,15 @@
 #include "mod1.h"
 #define W_IBLOCK 512
 #define WSIZE W_IBLOCK - (r->part_number % W_IBLOCK) + r->part_number
-
+#define EX (grps[i].coord[0] == grps[j].coord[0])
+#define LX (grps[i].coord[0] == grps[j].coord[0] - 1)
+#define MX (grps[i].coord[0] == grps[j].coord[0] + 1)
+#define EY (grps[i].coord[1] == grps[j].coord[1])
+#define LY (grps[i].coord[1] == grps[j].coord[1] - 1)
+#define MY (grps[i].coord[1] == grps[j].coord[1] + 1)
+#define EZ (grps[i].coord[2] == grps[j].coord[2])
+#define LZ (grps[i].coord[2] == grps[j].coord[2] - 1)
+#define MZ (grps[i].coord[2] == grps[j].coord[2] + 1)
 
 t_kernel *getErr(t_kernel *k)
 {
@@ -69,23 +78,120 @@ t_list *ft_searchlist(t_list *lst, int coord[3])
 	return (NULL);
 }
 
-t_grp *sort_pcl(t_render *r, t_pcl *pcls)
+t_grp *getGroupsNeighbors(t_render *r, t_grp *grps)
 {
-	float	HP = 100;
+	for (size_t i = 0; i < r->grp_n; i++) {
+		grps[i].n_groups_number = 0;
+		if (grps[i].n_groups_number < 26)
+			for (size_t j = 0; j < r->grp_n; j++) {
+				if (i == j)
+					continue;
+					if (MX && MY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && MY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && MY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && EY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && EY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && EY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && LY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && LY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (MX && LY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && MY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && MY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && MY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && EY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && EY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && LY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && LY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (EX && LY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && MY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && MY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && MY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && EY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && EY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && EY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && LY && MZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && LY && EZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+					else if (LX && LY && LZ)
+						grps[i].ngrp[grps[i].n_groups_number++] = j;
+			}
+	}
+}
+
+t_grp *assignGroups(t_render *r, t_pcl *pcls, t_list *list)
+{
+	t_grp	*grps;
+	t_list	*group = list;
+	t_list	*prevg;
+	t_list	*prevp;
+	size_t	g = 0;
+	if (!(grps = (t_grp*)malloc(sizeof(t_grp) * r->grp_n)))
+		return (NULL);
+	while (group) {
+		prevg = group;
+		grps[g].coord[0] = ((int*)group->content)[0];
+		grps[g].coord[1] = ((int*)group->content)[1];
+		grps[g].coord[2] = ((int*)group->content)[2];
+		grps[g].groups = r->grp_n;
+		grps[g].pcls = group->content_size;
+		group = group->next;
+		free(prevg);
+		prevg = group;
+		t_list *p_list = (t_list*)group->content;
+		for (size_t i = 0; i < grps[g].pcls; i++) {
+			prevp = p_list;
+			grps[g].pcl[i] = (int)p_list->content_size;
+			pcls[grps[g].pcl[i]].group = g;
+			p_list = p_list->next;
+			free(prevp);
+		}
+		g++;
+		group = group->next;
+		free(prevg);
+	}
+	return (grps);
+}
+
+t_grp *getGroups(t_render *r, t_pcl *pcls)
+{
+	float	HP = 17;
 	float	interval = (2000-HP)/HP;
 	t_list	*list = NULL;
 	t_list	*group;
 	size_t	pc = 0;
 	size_t	g = 0;
 	int		coord[3];
-	t_grp *grps;
 
 	for (size_t i = 0; i < r->part_number; i++)
 	{
 		coord[0] = 0;
 		coord[1] = 0;
 		coord[2] = 0;
-		for (float j = 0; interval * j + HP < 1000; j++)
+		for (float j = 0; interval * j + HP < 2000; j++)
 		{
 			if (interval * j + HP > pcls[i].posx)
 				coord[0] = (coord[0] == 0) ? j - 1 : coord[0];
@@ -112,35 +218,8 @@ t_grp *sort_pcl(t_render *r, t_pcl *pcls)
 			pc++;
 		}
 	}
-	if (!(grps = (t_grp*)malloc(sizeof(t_grp) * g)))
-		return (NULL);
 	r->grp_n = g;
-	group = list;
-	t_list *prevg;
-	t_list *prevp;
-	g = 0;
-	while (group) {
-		prevg = group;
-		grps[g].coord[0] = ((int*)group->content)[0];
-		grps[g].coord[1] = ((int*)group->content)[1];
-		grps[g].coord[2] = ((int*)group->content)[2];
-		grps[g].groups = r->grp_n;
-		grps[g].pcls = group->content_size;
-		group = group->next;
-		free(prevg);
-		prevg = group;
-		t_list *p_list = (t_list*)group->content;
-		for (size_t i = 0; i < group->content_size; i++) {
-			prevp = p_list;
-			grps[g].pcl[i] = (int)p_list->content_size;
-			p_list = p_list->next;
-			free(prevp);
-		}
-		g++;
-		group = group->next;
-		free(prevg);
-	}
-	return (grps);
+	return (assignGroups(r, pcls, list));
 }
 
 
@@ -152,7 +231,7 @@ int processKernel(t_render *r)
 	size_t *p = &(r->part_number);
 	static float energy = 0;
 
-	r->groups = sort_pcl(r, particles);
+	r->groups = getGroups(r, particles);
 
 	// for (size_t i = 0; i < r->grp_n; i++) {
 	// 	printf("%i %i %i\n", r->groups[i].coord[0], r->groups[i].coord[1], r->groups[i].coord[2]);

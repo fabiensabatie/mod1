@@ -14,7 +14,6 @@
 
 # define HP 100.f // kernel radius
 
-
 t_pcl *initParticles(t_render *r)
 {
 	t_pcl *particles;

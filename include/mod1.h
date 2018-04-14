@@ -3,24 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   mod1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wwatkins <wwatkins@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/29 17:23:49 by wwatkins          #+#    #+#             */
+/*   Created: 2018/03/20 17:23:49 by fsabatie          #+#    #+#             */
 /*   Updated: 2018/04/06 21:18:04 by vlay             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SCOP_H
-# define SCOP_H
+#ifndef MOD1_H
+# define MOD1_H
 # include "libft.h"
 # include <math.h>
 # include <GLFW/glfw3.h>
 # include <OpenCL/opencl.h>
 
 # define LOG_BUFFSIZE 10000000
-# define IX(x, y, z) ((x) + (y) * N + (z) * N * N)
-
-
 
 typedef struct		s_shader
 {
@@ -75,10 +72,12 @@ typedef struct	s_pcl {
 
 typedef struct	s_grp
 {
+	int			coord[3];
+	int			pcl[1000];
 	size_t		groups;
 	size_t		pcls;
-	int			coord[3];
-	int			pcl[100];
+	size_t		ngrps[26];
+	short		n_groups_number;
 }				t_grp;
 
 typedef struct	s_render
@@ -102,16 +101,15 @@ typedef struct	s_render
 
 int				init_win(t_render *r);
 int				render(t_render *r);
-t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, \
-				t_bool prog);
+int				processKernel(t_render *r);
+void			event(GLFWwindow* window, int key, int scancode, int action, int mods);
+void			updateParticlesState(t_render *r);
 float			interpolation(short n, float **points, float X, float Y);
 float			**parser(t_render *r, char *path);
-void			event(GLFWwindow* window, int key, int scancode, int action, \
-				int mods);
 t_pcl			*initParticles(t_render *r);
-void			updateParticlesState(t_render *r);
 GLchar			*getFileSource(char *filename);
-int				processKernel(t_render *r);
 t_kernel		*build_kernel(char *path);
+t_shader		*build_shader(char *filename, GLenum type, GLuint prog_id, t_bool prog);
+
 
 #endif
