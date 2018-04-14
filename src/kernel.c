@@ -14,6 +14,8 @@ sabatie          #+#    #+#             */
 #include "mod1.h"
 #define W_IBLOCK 512
 #define WSIZE W_IBLOCK - (r->part_number % W_IBLOCK) + r->part_number
+#define HPI 5
+#define INTERVAL (2000-HPI)/HPI
 #define EX (grps[i].coord[0] == grps[j].coord[0])
 #define LX (grps[i].coord[0] == grps[j].coord[0] - 1)
 #define MX (grps[i].coord[0] == grps[j].coord[0] + 1)
@@ -23,6 +25,18 @@ sabatie          #+#    #+#             */
 #define EZ (grps[i].coord[2] == grps[j].coord[2])
 #define LZ (grps[i].coord[2] == grps[j].coord[2] - 1)
 #define MZ (grps[i].coord[2] == grps[j].coord[2] + 1)
+#define IX (grps[i].coord[0] > 0)
+#define IY (grps[i].coord[1] > 0)
+#define IZ (grps[i].coord[2] > 0)
+#define JX (grps[j].coord[0] > 0)
+#define JY (grps[j].coord[1] > 0)
+#define JZ (grps[j].coord[2] > 0)
+#define MIX (grps[i].coord[0] < (int)2000/INTERVAL)
+#define MIY (grps[i].coord[1] < (int)2000/INTERVAL)
+#define MIZ (grps[i].coord[2] < (int)2000/INTERVAL)
+#define MJX (grps[j].coord[0] < (int)2000/INTERVAL)
+#define MJY (grps[j].coord[1] < (int)2000/INTERVAL)
+#define MJZ (grps[j].coord[2] < (int)2000/INTERVAL)
 
 t_kernel *getErr(t_kernel *k)
 {
@@ -86,60 +100,61 @@ t_grp *getGroupsNeighbors(t_render *r, t_grp *grps)
 			for (size_t j = 0; j < r->grp_n; j++) {
 				if (i == j)
 					continue;
-					if (MX && MY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && MY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && MY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && EY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && EY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && EY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && LY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && LY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (MX && LY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && MY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && MY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && MY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && EY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && EY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && LY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && LY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (EX && LY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && MY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && MY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && MY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && EY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && EY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && EY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && LY && MZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && LY && EZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
-					else if (LX && LY && LZ)
-						grps[i].ngrp[grps[i].n_groups_number++] = j;
+				if (MX && MY && MZ && IX && IY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && MY && EZ && IX && IY)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && MY && LZ && IX && IY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && EY && MZ && IX && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && EY && EZ && IX)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && EY && LZ && IX && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && LY && MZ && IX && MIY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && LY && EZ && IX && MIY)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (MX && LY && LZ && IX && MIY && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && MY && MZ && IY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && MY && EZ && IY)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && MY && LZ && IY && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && EY && MZ && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && EY && LZ && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && LY && MZ && MIY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && LY && EZ && MIY)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (EX && LY && LZ && MIY && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && MY && MZ && MIX && IY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && MY && EZ && MIX && IY)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && MY && LZ && MIX && IY && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && EY && MZ && MIX && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && EY && EZ && MIX)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && EY && LZ && MIX && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && LY && MZ && MIX && MIY && IZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && LY && EZ && MIX && MIY)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
+				else if (LX && LY && LZ && MIX && MIY && MIZ)
+					grps[i].ngrps[grps[i].n_groups_number++] = j;
 			}
 	}
+	return (grps);
 }
 
 t_grp *assignGroups(t_render *r, t_pcl *pcls, t_list *list)
@@ -178,8 +193,6 @@ t_grp *assignGroups(t_render *r, t_pcl *pcls, t_list *list)
 
 t_grp *getGroups(t_render *r, t_pcl *pcls)
 {
-	float	HP = 17;
-	float	interval = (2000-HP)/HP;
 	t_list	*list = NULL;
 	t_list	*group;
 	size_t	pc = 0;
@@ -191,13 +204,13 @@ t_grp *getGroups(t_render *r, t_pcl *pcls)
 		coord[0] = 0;
 		coord[1] = 0;
 		coord[2] = 0;
-		for (float j = 0; interval * j + HP < 2000; j++)
+		for (float j = 0; INTERVAL * j + HPI < 2000; j++)
 		{
-			if (interval * j + HP > pcls[i].posx)
+			if (INTERVAL * j + HPI > pcls[i].posx)
 				coord[0] = (coord[0] == 0) ? j - 1 : coord[0];
-			if (interval * j + HP > pcls[i].posy)
+			if (INTERVAL * j + HPI > pcls[i].posy)
 				coord[1] = (coord[1] == 0) ? j - 1 : coord[1];
-			if (interval * j + HP > pcls[i].posz)
+			if (INTERVAL * j + HPI > pcls[i].posz)
 				coord[2] = (coord[2] == 0) ? j - 1 : coord[2];
 		}
 		if (!(group = ft_searchlist(list, coord))) { // The group doesn not exist in the list
@@ -219,7 +232,7 @@ t_grp *getGroups(t_render *r, t_pcl *pcls)
 		}
 	}
 	r->grp_n = g;
-	return (assignGroups(r, pcls, list));
+	return (getGroupsNeighbors(r,assignGroups(r, pcls, list)));
 }
 
 

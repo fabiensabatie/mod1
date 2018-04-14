@@ -29,11 +29,11 @@ typedef struct	s_grp
 }				t_grp;
 
 // solver parameters
-#define G 12000*-9.8f // external (gravitational) forces
+#define G 12000*-15.8f // external (gravitational) forces
 #define REST_DENS 100.f // rest density
 #define GAS_CONST 2000.f // const for equation of state
 #define HP 100.f // kernel radius
-#define MASS 2.f // assume all particles have the same mass
+#define MASS 50.f // assume all particles have the same mass
 #define VISC 50.f // viscosity constant
 #define DT 0.0018f // integration timestep
 #define BOUND_DAMPING -1.f
@@ -51,7 +51,7 @@ __kernel void pcl_edit(__global t_pcl *particles,  __global const size_t *pn, \
 	float	djiy;
 	float	djiz;
 	float	resolver = 0.f;
-	float	HSQ = HP*HP*60;// // radius^2 for optimization
+	float	HSQ = HP*HP*25;// // radius^2 for optimization
 	float	EN = DT - *energy;
 	int		grps[26];
 	int		g_parse = 0;
